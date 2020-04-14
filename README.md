@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/arctiqjacob/ansible-role-vault.svg?branch=master)](https://travis-ci.org/arctiqjacob/ansible-role-vault)
+
 Ansible Role: Vault
 ===================
 
