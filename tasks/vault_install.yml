@@ -1,0 +1,110 @@
+---
+- name: installing vault dependencies
+  package:
+    name:
+    - unzip
+    - curl
+    state: present
+
+- name: creating vault group
+  group:
+    name: '{{ vault_group }}'
+    system: yes
+  when: vault_create_account
+
+- name: creating vault user
+  user:
+    name: '{{ vault_user }}'
+    home: '{{ vault_home_directory }}'
+    group: '{{ vault_group }}'
+    shell: /bin/false
+    system: yes
+  when: vault_create_account
+
+- name: creating vault directories
+  file:
+    state: directory
+    path: '{{ item }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  with_items:
+  - '{{ vault_home_directory }}'
+  - '{{ vault_data_directory }}'
+  - '{{ vault_install_directory }}'
+
+- name: installing vault binary
+  unarchive:
+    src: '{{ vault_download }}'
+    dest: '{{ vault_install_directory }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    remote_src: yes
+    mode: '0770'
+  notify:
+    - restart vault
+
+- name: creating vault data directory
+  file:
+    state: directory
+    path: '{{ vault_home_directory }}/data'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  when: vault_config.storage == 'file'
+
+- name: creating vault raft directory
+  file:
+    state: directory
+    path: '{{ vault_data_directory }}/raft'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  when: vault_config.storage == 'raft'
+
+- name: creating certificate directory
+  file:
+    state: directory
+    path: '{{ vault_home_directory }}/certs'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  when: not vault_config.tls_disable
+
+- name: copying over tls certificate and key
+  copy:
+    src: '{{ item }}'
+    dest: '{{ vault_home_directory }}/certs/{{ item }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0600'
+  with_items:
+    - '{{ vault_config.tls_cert_file }}'
+    - '{{ vault_config.tls_key_file }}'
+  when: not vault_config.tls_disable
+
+- name: templating out vault configuration
+  template:
+    src: vault.hcl.j2
+    dest: '{{ vault_config_file }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0640'
+  notify:
+    - restart vault
+
+- name: templating out systemd script
+  template:
+    src: vault.systemd.j2
+    dest: /etc/systemd/system/vault.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - reload vault daemon
+
+- name: starting and enabling Vault
+  systemd:
+    name: vault
+    enabled: yes
+    state: started
