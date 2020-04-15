@@ -54,7 +54,19 @@
     group: '{{ vault_group }}'
     remote_src: yes
     mode: '0770'
-  when: vault_health_status.json.version != vault_version
+  when: not vault_status.stat.exists 
+
+- name: installing new vault binary
+  unarchive:
+    src: '{{ vault_download }}'
+    dest: '{{ vault_install_directory }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    remote_src: yes
+    mode: '0770'
+  when:
+    - vault_status.stat.exists 
+    - vault_health_status.json.version != vault_version
   notify:
     - restart vault
 
