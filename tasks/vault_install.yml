@@ -44,7 +44,7 @@
     method: GET
     status_code: [200, 429, 472, 473, 501, 503]
   register: vault_health_status
-  when: '{{ vault_status.stat.exists }}'
+  when: vault_status.stat.exists
 
 - name: installing vault binary
   unarchive:
@@ -54,7 +54,7 @@
     group: '{{ vault_group }}'
     remote_src: yes
     mode: '0770'
-  when: '{{ vault_health_status.json.version|int }} != {{ vault_version|int }}'
+  when: vault_health_status.json.version != vault_version
   notify:
     - restart vault
 
