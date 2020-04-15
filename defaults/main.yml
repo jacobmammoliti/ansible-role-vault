@@ -19,3 +19,6 @@ vault_config:
   api_port: '8201'
   ui: true
   storage: 'file'
+
+seal:
+  type: 'shamir'

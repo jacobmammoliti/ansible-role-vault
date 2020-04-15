@@ -22,6 +22,11 @@ retry_join {
   }
   {% endfor %}
 }
+{% elif vault_config.storage == "consul" %}
+storage "consul" {
+  address = "127.0.0.1:8500"
+  path = "vault"
+}
 {% else %}
 storage "file" {
   path = "{{ vault_data_directory }}/data"
