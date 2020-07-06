@@ -40,9 +40,10 @@
 
 - name: checking vault version
   uri:
-    url: 'http://127.0.0.1:8200/v1/sys/health'
+    url: 'https://127.0.0.1:8200/v1/sys/health'
     method: GET
     status_code: [200, 429, 472, 473, 501, 503]
+    validate_certs: no
   register: vault_health_status
   when: vault_status.stat.exists
 
