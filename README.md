@@ -32,7 +32,7 @@ vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
 The version of Vault to install and where it should download its binary from.
 ```yaml
-vault_version: '1.4.0'
+vault_version: '1.4.3'
 vault_archive: 'vault_{{ vault_version }}_linux_amd64.zip'
 vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
 ```
@@ -63,7 +63,7 @@ seal:
 Dependencies
 ------------
 
-- If using Consul as backend storage: [Ansible Role: Consul]()
+- Consul cluster if using Consul as backend storage.
 
 Example with Integrated Storage
 -------------------------------

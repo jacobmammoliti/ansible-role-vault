@@ -38,14 +38,23 @@
     path: '{{ vault_install_directory }}/vault'
   register: vault_status
 
-- name: checking vault version
+- name: checking vault version over https
   uri:
     url: 'https://127.0.0.1:8200/v1/sys/health'
     method: GET
     status_code: [200, 429, 472, 473, 501, 503]
     validate_certs: no
   register: vault_health_status
-  when: vault_status.stat.exists
+  when: vault_status.stat.exists and not vault_config.tls_disable
+
+- name: checking vault version over http
+  uri:
+    url: 'http://127.0.0.1:8200/v1/sys/health'
+    method: GET
+    status_code: [200, 429, 472, 473, 501, 503]
+    validate_certs: no
+  register: vault_health_status
+  when: vault_status.stat.exists and vault_config.tls_disable
 
 - name: installing vault binary
   unarchive:
