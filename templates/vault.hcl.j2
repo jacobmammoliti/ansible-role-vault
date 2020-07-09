@@ -1,9 +1,11 @@
 {% if vault_config.tls_disable == True %}
+{% set proto="http" %}
 listener "tcp" {
   address     = "{{ vault_config.client_addr }}:{{ vault_config.http_port }}"
   tls_disable = "{{ vault_config.tls_disable }}"
 }
 {% else %}
+{% set proto="https" %}
 listener "tcp" {
   address       = "{{ vault_config.client_addr }}:{{ vault_config.http_port }}"
   tls_cert_file = "{{ vault_home_directory }}/certs/{{ vault_config.tls_cert_file }}"
@@ -18,15 +20,10 @@ storage "raft" {
 
 {% for host in groups['vault'] if not host == ansible_fqdn %}
   retry_join {
-{% if vault_config.tls_disable == True %}
-    leader_api_addr = "http://{{ host }}:{{ vault_config.http_port }}"
-{% else %}
-    leader_api_addr = "https://{{ host }}:{{ vault_config.http_port }}"
-{% endif %}
+    leader_api_addr = "{{ proto }}://{{ host }}:{{ vault_config.http_port }}"
   }
 {% endfor %}
 }
-
 {% elif vault_config.storage == "consul" %}
 storage "consul" {
   address = "127.0.0.1:8500"
@@ -48,11 +45,6 @@ seal "gcpckms" {
 {% endif %}
 
 disable_mlock    = "True"
-{% if vault_config.tls_disable == True %}
-api_addr         = "http://{{ ansible_fqdn }}:{{ vault_config.http_port }}"
-cluster_addr     = "http://{{ ansible_fqdn }}:{{ vault_config.api_port }}"
-{% else %}
-api_addr         = "https://{{ ansible_fqdn }}:{{ vault_config.http_port }}"
-cluster_addr     = "https://{{ ansible_fqdn }}:{{ vault_config.api_port }}"
-{% endif %}
+api_addr         = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_config.http_port }}"
+cluster_addr     = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_config.api_port }}"
 ui               = "{{ vault_config.ui }}"
