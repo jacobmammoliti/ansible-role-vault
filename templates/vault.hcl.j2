@@ -44,7 +44,7 @@ seal "gcpckms" {
 }
 {% endif %}
 
-disable_mlock    = "True"
+disable_mlock    = "{{ vault_config.disable_mlock }}"
 api_addr         = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_config.http_port }}"
 cluster_addr     = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_config.api_port }}"
 ui               = "{{ vault_config.ui }}"
