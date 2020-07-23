@@ -32,7 +32,7 @@ vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
 The version of Vault to install and where it should download its binary from.
 ```yaml
-vault_version: '1.4.3'
+vault_version: '1.5.0'
 vault_archive: 'vault_{{ vault_version }}_linux_amd64.zip'
 vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
 ```
