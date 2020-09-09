@@ -1,9 +1,10 @@
 vault_config:
   client_addr: '0.0.0.0'
-  tls_disable: false
+  tls_disable: true
   tls_cert_file: 'certs/vault.crt'
   tls_key_file: 'certs/vault.key'
   http_port: '8200'
   api_port: '8201'
   ui: true
   storage: 'raft'
+  disable_mlock: false
