@@ -2,17 +2,10 @@
 
 Ansible Role: Vault
 ===================
-
 A role to deploy a production grade [HashiCorp Vault](https://www.vaultproject.io/).
-
-Requirements
-------------
-
-- Compute Admin role in a GCP Project
 
 Role Variables
 --------------
-
 Ansible variables are listed below, along with default values (see `defaults/main.yml`):
 
 Controls whether a separate account is created or not and what the user and group should be named.
@@ -32,7 +25,7 @@ vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
 The version of Vault to install and where it should download its binary from.
 ```yaml
-vault_version: '1.5.0'
+vault_version: '1.5.3'
 vault_archive: 'vault_{{ vault_version }}_linux_amd64.zip'
 vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
 ```
@@ -62,13 +55,11 @@ seal:
 
 Dependencies
 ------------
-
 - Consul cluster if using Consul as backend storage.
 
-Example with Integrated Storage
--------------------------------
-
-The following example deploys a three node Vault 1.4 cluster with integrated storage in Google Cloud Platform.
+Example with Integrated Storage on GCP
+--------------------------------------
+The following example deploys a three node Vault 1.5 cluster with integrated storage in Google Cloud Platform.
 
 Create three compute instances which will host the Vault servers:
 ```shell
@@ -87,7 +78,7 @@ done
 
 Create an inventory file:
 ```shell
-cat > inventory <<EOF
+$ cat > inventory <<EOF
 [vault]
 vault-0.c.[PROJECT_ID].internal
 vault-1.c.[PROJECT_ID].internal
@@ -95,36 +86,9 @@ vault-2.c.[PROJECT_ID].internal
 EOF
 ```
 
-Create an Ansible playbook, calling the role:
-```shell
-cat > main.yaml <<EOF
----
-- hosts: vault
-  become: yes
-  roles:
-    - role: ansible-role-vault
-      vars:
-        vault_config:
-          client_addr: '0.0.0.0'
-          tls_disable: false
-          tls_cert_file: 'vault.crt'
-          tls_key_file: 'vault.key'
-          http_port: '8200'
-          api_port: '8201'
-          ui: true
-          storage: 'raft'
-        seal:
-          type: 'gcpkms'
-          project: '[PROJECT_ID]'
-          region: 'global'
-          key_ring: '[VAULT_KEY_RING]'
-          crypto_key: '[VAULT_KEY]'
-EOF
-```
-
 Ensure Python is installed on the servers:
 ```shell
-ansible -i inventory vault -m ping
+$ ansible -i inventory vault -m ping
 vault-0.c.[PROJECT_ID].internal | SUCCESS => {
     "changed": false, 
     "ping": "pong"
@@ -141,7 +105,7 @@ vault-1.c.[PROJECT_ID].internal | SUCCESS => {
 
 Run the Ansible playbook:
 ```shell
-$ ansible-playbook -i inventory main.yaml
+$ ansible-playbook -i inventory site.yaml
 ...
 PLAY RECAP *********************************************************************
 vault-0.c.[PROJECT_ID].internal : ok=11   changed=9    unreachable=0    failed=0   
@@ -178,9 +142,8 @@ vault1    vault-1.c.[PROJECT_ID].internal:8201       follower    true
 vault2    vault-2.c.[PROJECT_ID].internal:8201       follower    true
 ```
 
-Example with Consul Storage
-----------------------------
-
+Example with Consul Storage on GCP
+----------------------------------
 The following example deploys a three node Vault 1.4 cluster with Consul storage in Google Cloud Platform.
 
 Create three compute instances which will host the Consul servers and two compute instances which will host the Vault servers:
@@ -323,5 +286,4 @@ again. Future Vault requests will automatically use this token.
 
 Author Information
 ------------------
-
 Jacob Mammoliti | jacob.mammoliti@arctiq.ca
