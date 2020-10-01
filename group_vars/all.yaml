@@ -6,5 +6,5 @@ vault_config:
   http_port: '8200'
   api_port: '8201'
   ui: true
-  storage: 'raft'
+  storage: 'consul'
   disable_mlock: false
