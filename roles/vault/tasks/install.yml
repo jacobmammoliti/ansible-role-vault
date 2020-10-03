@@ -64,7 +64,7 @@
     group: '{{ vault_group }}'
     remote_src: yes
     mode: '0770'
-  when: not vault_status.stat.exists
+  when: not vault_status.stat.exists and 'https' in vault_download
 
 - name: installing new vault binary
   unarchive:
