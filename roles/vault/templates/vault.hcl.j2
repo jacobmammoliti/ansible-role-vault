@@ -17,6 +17,14 @@ listener "tcp" {
 storage "raft" {
   path = "{{ vault_data_directory }}/raft"
   node_id = "{{ ansible_hostname }}"
+
+{% if vault_server_list %}
+{% for server in vault_server_list %}
+  retry_join {
+    leader_api_addr = "{{ proto }}://{{ server }}:{{ vault_config.http_port }}"
+  }
+{% endfor %}
+{% endif %}
 }
 {% elif vault_config.storage == "consul" %}
 storage "consul" {
