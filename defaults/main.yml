@@ -8,18 +8,21 @@ vault_data_directory: '/opt/vault'
 vault_install_directory: '{{ vault_data_directory }}/bin'
 vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
-vault_version: '1.5.3'
+vault_version: '1.6.0'
 vault_archive: 'vault_{{ vault_version }}_linux_amd64.zip'
 vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
 
-vault_config:
-  client_addr: '0.0.0.0'
-  tls_disable: true
-  http_port: '8200'
-  api_port: '8201'
-  ui: true
-  storage: 'file'
-  disable_mlock: false
+vault_client_addr: '0.0.0.0'
+vault_http_port: '8200'
+vault_api_port: '8201'
+vault_ui: true
 
-seal:
-  type: 'shamir'
+vault_storage_backend: 'file'
+vault_disable_mlock: false
+
+vault_seal_type: 'shamir'
+
+vault_tls_disable: true
+vault_tls_directory: '{{ vault_home_directory }}/tls'
+vault_tls_cert_file: 'tls/dc1-server-consul-0.pem'
+vault_tls_key_file: 'tls/dc1-server-consul-0-key.pem'

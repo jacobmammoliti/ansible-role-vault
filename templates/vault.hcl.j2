@@ -1,0 +1,61 @@
+{% if vault_config.tls_disable == True %}
+{% set proto="http" %}
+listener "tcp" {
+  address     = "{{ vault_client_addr }}:{{ vault_http_port }}"
+  tls_disable = "{{ vault_tls_disable }}"
+}
+{% else %}
+{% set proto="https" %}
+listener "tcp" {
+  address       = "{{ vault_client_addr }}:{{ vault_http_port }}"
+  tls_cert_file = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
+  tls_key_file  = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
+}
+{% endif %}
+
+{% if vault_storage_backend == "integrated" %}
+storage "raft" {
+  path = "{{ vault_data_directory }}/raft"
+  node_id = "{{ ansible_hostname }}"
+
+{% if vault_server_list is defined %}
+{% for server in vault_server_list if not server == ansible_default_ipv4.address %}
+  retry_join {
+    leader_api_addr = "{{ proto }}://{{ server }}:{{ vault_http_port }}"
+  }
+{% endfor %}
+{% endif %}
+}
+{% elif vault_storage_backend == "consul" %}
+storage "consul" {
+  address = "127.0.0.1:8500"
+  path = "vault/"
+}
+{% else %}
+storage "file" {
+  path = "{{ vault_data_directory }}/data"
+}
+{% endif %}
+
+{% if vault_seal_type == "gcpkms" %}
+seal "gcpckms" {
+  project     = "{{ vault_seal_gcp_project }}"
+  region      = "{{ vault_seal_gcp_region }}"
+  key_ring    = "{{ vault_seal_gcp_key_ring }}"
+  crypto_key  = "{{ vault_seal_gcp_crypto_key }}"
+}
+{% elif vault_seal_type == "pkcs11" %}
+seal "pkcs11" { 
+  lib            = "{{ vault_hsm_crypto_library }}"
+  slot           = "{{ vault_hsm_slot }}"
+  pin            = "{{ vault_hsm_pin }}"
+  generate_key   = "{{ vault_hsm_generate_key }}"
+  key_label      = "{{ vault_hsm_key_label }}"
+  hmac_key_label = "{{ vault_hsm_hmac_key_label }}"
+}
+{% endif %}
+
+disable_mlock    = "{{ vault_disable_mlock }}"
+api_addr         = "{{ proto }}://{{ ansible_default_ipv4.address }}:{{ vault_http_port }}"
+cluster_addr     = "{{ proto }}://{{ ansible_default_ipv4.address }}:{{ vault_api_port }}"
+ui               = "{{ vault_ui }}"

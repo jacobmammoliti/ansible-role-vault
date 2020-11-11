@@ -17,7 +17,7 @@
     name: '{{ vault_user }}'
     home: '{{ vault_home_directory }}'
     group: '{{ vault_group }}'
-    shell: /bin/false
+    shell: /sbin/nologin
     system: yes
   when: vault_create_account
 
@@ -33,29 +33,6 @@
   - '{{ vault_data_directory }}'
   - '{{ vault_install_directory }}'
 
-- name: checking if vault binary already exists
-  stat:
-    path: '{{ vault_install_directory }}/vault'
-  register: vault_status
-
-- name: checking vault version over https
-  uri:
-    url: 'https://127.0.0.1:8200/v1/sys/health'
-    method: GET
-    status_code: [200, 429, 472, 473, 501, 503]
-    validate_certs: no
-  register: vault_health_status
-  when: vault_status.stat.exists and not vault_config.tls_disable
-
-- name: checking vault version over http
-  uri:
-    url: 'http://127.0.0.1:8200/v1/sys/health'
-    method: GET
-    status_code: [200, 429, 472, 473, 501, 503]
-    validate_certs: no
-  register: vault_health_status
-  when: vault_status.stat.exists and vault_config.tls_disable
-
 - name: installing vault binary
   unarchive:
     src: '{{ vault_download }}'
@@ -64,19 +41,29 @@
     group: '{{ vault_group }}'
     remote_src: yes
     mode: '0770'
-  when: not vault_status.stat.exists and 'https' in vault_download
+  notify:
+    - restart vault
 
-- name: installing new vault binary
-  unarchive:
-    src: '{{ vault_download }}'
-    dest: '{{ vault_install_directory }}'
+- name: creating TLS directory
+  file:
+    state: directory
+    path: '{{ vault_tls_directory }}'
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
-    remote_src: yes
-    mode: '0770'
-  when:
-    - vault_status.stat.exists
-    - vault_health_status.json.version != vault_version
+    mode: '0750'
+  when: not vault_tls_disable
+
+- name: copying over TLS certificates
+  copy:
+    src: '{{ item }}'
+    dest: '{{ vault_tls_directory }}/{{ item | basename }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0400'
+  with_items:
+  - '{{ vault_tls_cert_file }}'
+  - '{{ vault_tls_key_file }}'
+  when: not vault_tls_disable
   notify:
     - restart vault
 
@@ -87,7 +74,7 @@
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0750'
-  when: vault_config.storage == 'file'
+  when: vault_storage_backend == 'file'
 
 - name: creating vault raft directory
   file:
@@ -96,28 +83,7 @@
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0750'
-  when: vault_config.storage == 'raft'
-
-- name: creating certificate directory
-  file:
-    state: directory
-    path: '{{ vault_home_directory }}/certs'
-    owner: '{{ vault_user }}'
-    group: '{{ vault_group }}'
-    mode: '0750'
-  when: not vault_config.tls_disable
-
-- name: copying over tls certificate and key
-  copy:
-    src: '{{ item }}'
-    dest: '{{ vault_home_directory }}/certs/{{ item }}'
-    owner: '{{ vault_user }}'
-    group: '{{ vault_group }}'
-    mode: '0600'
-  with_items:
-    - '{{ vault_config.tls_cert_file }}'
-    - '{{ vault_config.tls_key_file }}'
-  when: not vault_config.tls_disable
+  when: vault_storage_backend == 'integrated'
 
 - name: templating out vault configuration
   template:
@@ -135,7 +101,7 @@
     dest: /etc/systemd/system/vault.service
     owner: root
     group: root
-    mode: '0644'
+    mode: '0640'
   notify:
     - reload vault daemon
 

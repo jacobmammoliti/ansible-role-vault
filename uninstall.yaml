@@ -16,6 +16,7 @@
       - '/etc/systemd/system/vault.service'
       - '{{ vault_home_directory }}'
       - '{{ vault_data_directory }}'
+      - '{{ vault_tls_directory }}'
     
     - name: removing vault user
       user:
