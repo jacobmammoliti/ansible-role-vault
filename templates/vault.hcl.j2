@@ -1,4 +1,4 @@
-{% if vault_config.tls_disable == True %}
+{% if vault_tls_disable == True %}
 {% set proto="http" %}
 listener "tcp" {
   address     = "{{ vault_client_addr }}:{{ vault_http_port }}"
