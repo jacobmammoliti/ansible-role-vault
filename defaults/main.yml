@@ -26,3 +26,5 @@ vault_tls_disable: true
 vault_tls_directory: '{{ vault_home_directory }}/tls'
 vault_tls_cert_file: 'tls/dc1-server-consul-0.pem'
 vault_tls_key_file: 'tls/dc1-server-consul-0-key.pem'
+
+consul_http_port: '8500'

@@ -28,8 +28,9 @@ storage "raft" {
 }
 {% elif vault_storage_backend == "consul" %}
 storage "consul" {
-  address = "127.0.0.1:8500"
-  path = "vault/"
+  address = "127.0.0.1:{{ consul_http_port }}"
+  path    = "vault/"
+  token   = "{{ vault_consul_acl_token }}"
 }
 {% else %}
 storage "file" {
