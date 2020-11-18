@@ -28,3 +28,6 @@ vault_tls_cert_file: 'tls/dc1-server-consul-0.pem'
 vault_tls_key_file: 'tls/dc1-server-consul-0-key.pem'
 
 consul_http_port: '8500'
+consul_scheme: 'http'
+consul_tls_enabled: false
+consul_vault_kv_path: 'vault/'
