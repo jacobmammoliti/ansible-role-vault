@@ -33,7 +33,7 @@
   - '{{ vault_data_directory }}'
   - '{{ vault_install_directory }}'
 
-- name: installing vault binary
+- name: installing vault binary from remote
   unarchive:
     src: '{{ vault_download }}'
     dest: '{{ vault_install_directory }}'
@@ -43,6 +43,18 @@
     mode: '0770'
   notify:
     - restart vault
+  when: not vault_local_binary
+
+- name: installing vault binary from local
+  copy:
+    src: '{{ vault_local_binary_location }}'
+    dest: '{{ vault_install_directory }}/{{ vault_local_binary_location | basename }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0770'
+  notify:
+    - restart vault
+  when: vault_local_binary
 
 - name: creating TLS directory
   file:

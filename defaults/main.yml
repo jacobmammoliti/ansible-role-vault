@@ -11,6 +11,8 @@ vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 vault_version: '1.6.0'
 vault_archive: 'vault_{{ vault_version }}_linux_amd64.zip'
 vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
+vault_local_binary: false
+vault_local_binary_location: 'binary/vault'
 
 vault_client_addr: '0.0.0.0'
 vault_http_port: '8200'
