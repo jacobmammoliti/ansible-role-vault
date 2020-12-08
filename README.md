@@ -43,7 +43,8 @@ vault_config:
   storage: 'file'
 ```
 
-Controls how Vault's sealing mechanism. This data is used in the templated out `vault.hcl` file.
+`vault_seal_type` controls Vault's sealing mechanism. This data is used in the templated out `vault.hcl` file.
+Options are: `shamir`, `pkcs11`, and `gcpkms`.
 ```yaml
 seal:
   type: ''
