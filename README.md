@@ -70,6 +70,7 @@ vault_newsystemdversion: true
 
 `vault_home_usr` toggles aspects of systemd sandboxing if the Vault home and data directory are in the `/usr` folder. If so, system unit ProtectSystem
 parameters cannot be used, reference: [Sandboxing](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Sandboxing).
+> :warning: **Warning:** Setting this to `true` weakens your security posture! Don't set home and data to a path in `/usr` if you can avoid it!
 
 ```yaml
 vault_home_usr: false

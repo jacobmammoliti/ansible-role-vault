@@ -5,13 +5,13 @@
   tasks:
     - name: stopping vault service
       systemd:
-      name: vault
-      state: stopped
+        name: vault
+        state: stopped
       
     - name: removing all Vault files and directories
       file:
-      path: '{{ item }}'
-      state: absent
+        path: '{{ item }}'
+        state: absent
       with_items:
       - '/etc/systemd/system/vault.service'
       - '{{ vault_home_directory }}'
@@ -20,18 +20,18 @@
     
     - name: removing vault user
       user:
-      name: '{{ vault_user }}'
-      state: absent
-      remove: yes
+        name: '{{ vault_user }}'
+        state: absent
+        remove: yes
     
     - name: removing vault user
       group:
-      name: '{{ vault_group }}'
-      state: absent
+        name: '{{ vault_group }}'
+        state: absent
       
     - name: removing vault dependencies
       package:
-      name:
+        name:
         - unzip
         - curl
-      state: absent
+        state: absent
