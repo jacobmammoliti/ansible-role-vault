@@ -54,6 +54,27 @@ seal:
   crypto_key: ''
 ```
 
+`vault_tls_disable_client_certs` controls if Vault should request certificates from clients. Defaults to `true`, meaning
+client certificates are not requested. Only applicable when `vault_tls_disable` is `false`.
+
+```yaml
+vault_tls_disable_client_certs: true
+```
+
+`vault_newsystemdversion` toggles to systemd unit file parameters that are available with systemd v230 and newer.
+Defaults to `true`. Set to `false` on RHEL7, which ships with systemd v219.
+
+```yaml
+vault_newsystemdversion: true
+```
+
+`vault_home_usr` toggles aspects of systemd sandboxing if the Vault home and data directory are in the `/usr` folder. If so, system unit ProtectSystem
+parameters cannot be used, reference: [Sandboxing](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Sandboxing).
+
+```yaml
+vault_home_usr: false
+```
+
 Dependencies
 ------------
 - Consul cluster if using Consul as backend storage.
