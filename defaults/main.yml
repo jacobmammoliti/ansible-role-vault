@@ -41,3 +41,4 @@ consul_http_port: '8500'
 consul_scheme: 'http'
 consul_tls_enabled: false
 consul_vault_kv_path: 'vault/'
+consul_acl_enabled: false
