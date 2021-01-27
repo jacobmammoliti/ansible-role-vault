@@ -67,6 +67,6 @@ seal "pkcs11" {
 {% endif %}
 
 disable_mlock    = "{{ vault_disable_mlock }}"
-api_addr         = "{{ proto }}://{{ inventory_hostname }}:{{ vault_http_port }}"
-cluster_addr     = "{{ proto }}://{{ inventory_hostname }}:{{ vault_api_port }}"
+api_addr         = "{{ proto }}://{{ ansible_hostname }}:{{ vault_http_port }}"
+cluster_addr     = "{{ proto }}://{{ ansible_hostname }}:{{ vault_api_port }}"
 ui               = "{{ vault_ui }}"
