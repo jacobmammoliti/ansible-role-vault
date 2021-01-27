@@ -32,7 +32,9 @@ storage "consul" {
   address = "127.0.0.1:{{ consul_http_port }}"
   scheme  = "{{ consul_scheme }}"
   path    = "{{ consul_vault_kv_path }}"
+{% if consul_acl_enabled %}
   token   = "{{ consul_vault_acl_token }}"
+{% endif %}
 {% if consul_tls_enabled %}
   tls_ca_file     = "{{ consul_tls_ca_file }}"
   tls_cert_file   = "{{ consul_tls_cert_file }}"
