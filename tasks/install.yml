@@ -1,5 +1,5 @@
 ---
-- name: installing consul dependencies via yum
+- name: installing vault dependencies via yum
   yum:
     name:
       - unzip
@@ -8,7 +8,7 @@
     update_cache: yes
   when: ansible_pkg_mgr == 'yum'
 
-- name: installing consul dependencies via apt
+- name: installing vault dependencies via apt
   apt:
     name:
       - unzip
