@@ -8,73 +8,230 @@ Role Variables
 --------------
 Ansible variables are listed below, along with default values (see `defaults/main.yml`):
 
-Controls whether a separate account is created or not and what the user and group should be named.
-```yaml
-vault_user: 'vault'
-vault_group: 'vault'
-vault_create_account: true
-```
+### `vault_user`
 
-Where to initialize Vault's home, data, and install directory.
-```yaml
-vault_home_directory: '/etc/vault.d'
-vault_data_directory: '/opt/vault'
-vault_install_directory: '{{ vault_data_directory }}/bin'
-vault_config_file: '{{ vault_home_directory }}/vault.hcl'
-```
+- OS user
+- Default value: vault
 
-The version of Vault to install and where it should download its binary from.
-```yaml
-vault_version: '1.5.3'
-vault_archive: 'vault_{{ vault_version }}_linux_amd64.zip'
-vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
-```
+### `vault_group`
 
-Controls how Vault should be configured. This data is used in the templated out `vault.hcl` file.
-```yaml
-vault_config:
-  client_addr: '0.0.0.0'
-  tls_disable: true
-  tls_cert_file: ''
-  tls_key_file: ''
-  http_port: '8200'
-  api_port: '8201'
-  ui: true
-  storage: 'file'
-```
+- OS group
+- Default value: vault
 
-`vault_seal_type` controls Vault's sealing mechanism. This data is used in the templated out `vault.hcl` file.
-Options are: `shamir`, `pkcs11`, and `gcpkms`.
-```yaml
-seal:
-  type: ''
-  project: ''
-  region: ''
-  key_ring: ''
-  crypto_key: ''
-```
+### `vault_create_account`
 
-`vault_tls_disable_client_certs` controls if Vault should request certificates from clients. Defaults to `true`, meaning
-client certificates are not requested. Only applicable when `vault_tls_disable` is `false`.
+- Whether to create the user and group defined by `vault_user` and `vault_group` or not
+- Default value: true
 
-```yaml
-vault_tls_disable_client_certs: true
-```
+### `vault_home_directory`
 
-`vault_newsystemdversion` toggles to systemd unit file parameters that are available with systemd v230 and newer.
-Defaults to `true`. Set to `false` on RHEL7, which ships with systemd v219.
+- Location of Vault's home directory
+- Default value: `/etc/vault.d`
 
-```yaml
-vault_newsystemdversion: true
-```
+### `vault_data_directory`
 
-`vault_home_usr` toggles aspects of systemd sandboxing if the Vault home and data directory are in the `/usr` folder. If so, system unit ProtectSystem
-parameters cannot be used, reference: [Sandboxing](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Sandboxing).
-> :warning: **Warning:** Setting this to `true` weakens your security posture! Don't set home and data to a path in `/usr` if you can avoid it!
+- Location of Vault's data directory
+- Default value: `/opt/vault`
 
-```yaml
-vault_home_usr: false
-```
+### `vault_install_directory`
+
+- Location of the Vault binary
+- Default value: `/opt/vault/bin`
+
+### `vault_config_file`
+
+- Location of the Vault configuration file
+- Default value: `/etc/vault.d/vault.hcl`
+
+### `vault_version`
+
+- Version of Vault to download and install
+- Default value: `1.6.3`
+
+### `vault_archive`
+
+- Name of the Vault file archive to download
+- Default value: `vault_1.6.3_linux_amd64.zip`
+
+### `vault_download`
+
+- Full URL location to download vault
+- Default value: `https://releases.hashicorp.com/vault/1.6.3/vault_1.6.3_linux_amd64.zip`
+
+### `vault_local_binary`
+
+- Whether to use a binary stored locally (this is mutually exclusive with the three above variables)
+- Default value: false
+
+### `vault_local_binary_location`
+
+- Location of the local binary
+- Default value: `binary/vault`
+
+### `vault_client_addr`
+
+- The address to which Vault will bind client interfaces
+- Default value: `0.0.0.0`
+
+### `vault_http_port`
+
+- HTTP port for Vault
+- Default value: `8200`
+
+### `vault_api_port`
+
+- HTTP API port for Vault
+- Default value: `8201`
+
+### `vault_ui`
+
+- Whether the UI is enabled or not
+- Default value: true
+
+### `vault_storage_backend`
+
+- Storage backend to use
+- Default value: file
+
+### `vault_disable_mlock`
+
+- Whether to disable memory lock or not
+- Default value: false
+
+### `vault_seal_type`
+
+- Seal type to use
+- Default value: shamir
+
+### `vault_seal_gcp_project`
+
+- GCP project the KMS lives in
+- Default value: None
+
+### `vault_seal_gcp_region`
+
+- GCP region the KMS lives in
+- Default value: None
+
+### `vault_seal_gcp_key_ring`
+
+- Name of the KMS Keyring in GCP
+- Default value: None
+
+### `vault_seal_gcp_crypto_key`
+
+- Name of the KMS Key in GCP
+- Default value: None
+
+### `vault_hsm_crypto_library`
+
+- Path to the HSM's local crypto library
+- Default value: None
+
+### `vault_hsm_slot`
+
+- The HSM slot number
+- Default value: None
+
+### `vault_hsm_pin`
+
+- The HSM pin Vault will use to connect
+- Default value: None
+
+### `vault_hsm_generate_key`
+
+- Whether or not Vault to generate its own encryption key in the HSM
+- Default value: None
+
+### `vault_hsm_key_label`
+
+- The encryption key label for Vault in the HSM
+- Default value: None
+
+### `vault_hsm_hmac_key_label`
+
+- The encryption key HMAC label for Vault in the HSM
+- Default value: None
+
+### `vault_tls_disable`
+
+- Whether to disable TLS or not
+- Default value: true
+
+### `vault_tls_directory`
+
+- Directory that TLS certificates live in
+- Default value: `/etc/vault.d/tls`
+
+### `vault_tls_cert_file`
+
+- Local path to the TLS signed certificate to copy over
+- Default value: `tls/dc1-server-consul-0.pem`
+
+### `vault_tls_key_file`
+
+- Local path to the TLS key to copy over
+- Default value: `tls/dc1-server-consul-0-key.pem`
+
+### `vault_tls_disable_client_certs`
+
+- Whether to disable client certificates or not
+- Default value: true
+
+### `consul_http_port`
+
+- Port to use to connect to local Consul agent
+- Default value: `8500`
+
+### `consul_scheme`
+
+- Scheme to use to connect to Consul
+- Default value: http
+
+### `consul_vault_kv_path`
+
+- Path to Vault's data in Consul KV
+- Default value: `vault/`
+
+### `consul_acl_enabled`
+
+- Whether Consul ACLs are enabled or not
+- Default value: false
+
+### `consul_tls_enabled`
+
+- Whether Consul TLS is enabled or not
+- Default value: false
+
+### `consul_tls_directory`
+
+- Directory that Consul TLS certificates live in
+- Default value: `/etc/consul.d/tls`
+
+### `consul_tls_ca_file`
+
+- Local path to the TLS CA certificate to copy over
+- Default value: `tls/consul-agent-ca.pem`
+
+### `consul_tls_cert_file`
+
+- Local path to the TLS signed certificate to copy over
+- Default value: `tls/dc1-server-consul-0.pem`
+
+### `consul_tls_key_file`
+
+- Local path to the TLS key to copy over
+- Default value: `tls/dc1-server-consul-0-key.pem`
+
+### `consul_tls_skip_verify`
+
+- Whether or not to skip verification of Consul TLS certificates
+- Default value: false
+
+### `consul_vault_acl_token`
+
+- Vault's ACL token in Consul (requred if ACLS are enabled in Consul cluster)
+- Default value: None
 
 Dependencies
 ------------

@@ -8,7 +8,7 @@ vault_data_directory: '/opt/vault'
 vault_install_directory: '{{ vault_data_directory }}/bin'
 vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
-vault_version: '1.6.0'
+vault_version: '1.6.3'
 vault_archive: 'vault_{{ vault_version }}_linux_amd64.zip'
 vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
 vault_local_binary: false
@@ -40,5 +40,6 @@ vault_home_usr: false
 consul_http_port: '8500'
 consul_scheme: 'http'
 consul_tls_enabled: false
+consul_tls_skip_verify: false
 consul_vault_kv_path: 'vault/'
 consul_acl_enabled: false
