@@ -55,6 +55,16 @@ seal "gcpckms" {
   key_ring    = "{{ vault_seal_gcp_key_ring }}"
   crypto_key  = "{{ vault_seal_gcp_crypto_key }}"
 }
+{% elif vault_seal_type == "awskms" %}
+seal "awskms" {
+  region     = "{{ vault_seal_aws_region }}"
+  access_key = "{{ vault_seal_aws_access_key }}"
+  secret_key = "{{ vault_seal_aws_secret_key }}"
+  kms_key_id = "{{ vault_seal_aws_kms_key_id }}"
+{% if vault_seal_aws_endpoint is defined %}
+  endpoint   = "{{ vault_seal_aws_endpoint }}"
+{% endif %}
+}
 {% elif vault_seal_type == "pkcs11" %}
 seal "pkcs11" { 
   lib            = "{{ vault_hsm_crypto_library }}"
