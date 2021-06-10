@@ -123,6 +123,32 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Name of the KMS Key in GCP
 - Default value: None
 
+### `vault_seal_aws_region`
+
+- AWS region the KMS lives in
+- Default value: None
+
+### `vault_seal_aws_access_key`
+
+- Name of the AWS access key
+- Default value: None
+
+### `vault_seal_aws_secret_key`
+
+- Name of the AWS secret key
+- Default value: None
+
+### `vault_seal_aws_kms_key_id`
+
+- AWS KMS key ID
+- Default value: None
+
+### `vault_seal_aws_endpoint`
+
+- (optional) AWS KMS API endpoint. If not set, default API endpoint for region will be used.
+- Default value: None
+- [Vault API ref](https://www.vaultproject.io/docs/configuration/seal/awskms#endpoint)
+
 ### `vault_hsm_crypto_library`
 
 - Path to the HSM's local crypto library
