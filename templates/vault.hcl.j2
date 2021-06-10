@@ -18,14 +18,11 @@ listener "tcp" {
 storage "raft" {
   path    = "{{ vault_data_directory }}/raft"
   node_id = "{{ ansible_fqdn }}"
-
-{% if vault_server_list is defined %}
-{% for server in vault_server_list if not server == ansible_default_ipv4.address %}
+{% for vault_server in groups['vault'] if not server == ansible_fqdn %}
   retry_join {
-    leader_api_addr = "{{ proto }}://{{ server }}:{{ vault_http_port }}"
+    leader_api_addr = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
   }
 {% endfor %}
-{% endif %}
 }
 {% elif vault_storage_backend == "consul" %}
 storage "consul" {
