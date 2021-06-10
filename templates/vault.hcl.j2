@@ -18,7 +18,7 @@ listener "tcp" {
 storage "raft" {
   path    = "{{ vault_data_directory }}/raft"
   node_id = "{{ ansible_fqdn }}"
-{% for vault_server in groups['vault'] if not server == ansible_fqdn %}
+{% for vault_server in groups['vault'] if not vault_server == ansible_fqdn %}
   retry_join {
     leader_api_addr = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
   }
