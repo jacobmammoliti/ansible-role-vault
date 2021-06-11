@@ -92,9 +92,9 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Default value: file
 
 
-### `telemetry_statsite_address`
+### `vault_telemetry`
 
-- 
+- Dictionary containing telemetry key-value data
 - Default value: None
 
 ### `vault_disable_mlock`

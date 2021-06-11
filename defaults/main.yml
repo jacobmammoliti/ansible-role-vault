@@ -50,6 +50,3 @@ consul_scheme: 'http'
 consul_tls_enabled: false
 consul_tls_skip_verify: false
 consul_vault_kv_path: 'vault/'
-
-vault_telemetry:
-  statsite_address: 'statsite.company.local:8125'
