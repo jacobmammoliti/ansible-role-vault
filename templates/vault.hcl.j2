@@ -73,6 +73,14 @@ seal "pkcs11" {
 }
 {% endif %}
 
+{% if vault_telemetry is defined %}
+telemetry {
+  {% for item in vault_telemetry %}
+  item.key = item.value
+  {% endfor %}
+}
+{% endif %}
+
 disable_mlock    = "{{ vault_disable_mlock }}"
 api_addr         = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
 cluster_addr     = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
