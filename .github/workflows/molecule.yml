@@ -21,7 +21,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          pwd
+          pwd && ls
           python3 -m pip install molecule
       - name: Test with molecule
         run: |
