@@ -76,7 +76,7 @@ seal "pkcs11" {
 {% if vault_telemetry is defined %}
 telemetry {
   {% for item in vault_telemetry %}
-  item.key = item.value
+  {{ item.key }} = {{ item.value }}
   {% endfor %}
 }
 {% endif %}
