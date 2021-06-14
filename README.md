@@ -81,7 +81,7 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - HTTP API port for Vault
 - Default value: `8201`
 
-### `vault_ui`
+### `vault_ui_enable`
 
 - Whether the UI is enabled or not
 - Default value: true
@@ -90,7 +90,6 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 
 - Storage backend to use
 - Default value: file
-
 
 ### `vault_telemetry`
 
@@ -226,11 +225,6 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `consul_acl_enabled`
 
 - Whether Consul ACLs are enabled or not
-- Default value: false
-
-### `consul_tls_enabled`
-
-- Whether Consul TLS is enabled or not
 - Default value: false
 
 ### `consul_tls_directory`

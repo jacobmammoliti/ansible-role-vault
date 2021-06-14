@@ -7,9 +7,9 @@ listener "tcp" {
 {% else %}
 {% set proto="https" %}
 listener "tcp" {
-  address       = "{{ vault_client_addr }}:{{ vault_http_port }}"
-  tls_cert_file = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
-  tls_key_file  = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
+  address                  = "{{ vault_client_addr }}:{{ vault_http_port }}"
+  tls_cert_file            = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
+  tls_key_file             = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
   tls_disable_client_certs = "{{ vault_tls_disable_client_certs }}"
 }
 {% endif %}
@@ -20,7 +20,14 @@ storage "raft" {
   node_id = "{{ ansible_fqdn }}"
 {% for vault_server in groups['vault'] if not vault_server == ansible_fqdn %}
   retry_join {
-    leader_api_addr = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
+    leader_api_addr         = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
+{% if vault_tls_disable == False %}
+{% if vault_leader_ca_cert_file is defined %}
+    leader_ca_cert_file     = "{{ vault_leader_ca_cert_file }}"
+{% endif %}
+    leader_client_cert_file = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
+    leader_client_key_file  = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
+{% endif %}
   }
 {% endfor %}
 }
@@ -32,8 +39,10 @@ storage "consul" {
 {% if consul_vault_acl_token is defined %}
   token   = "{{ consul_vault_acl_token }}"
 {% endif %}
-{% if consul_tls_enabled %}
+{% if consul_tls_cert_file is defined and consul_tls_key_file is defined %}
+{% if consul_tls_ca_file is defined %}
   tls_ca_file     = "{{ consul_tls_directory }}/{{ consul_tls_ca_file | basename }}"
+{% endif %}
   tls_cert_file   = "{{ consul_tls_directory }}/{{ consul_tls_cert_file | basename }}"
   tls_key_file    = "{{ consul_tls_directory }}/{{ consul_tls_key_file | basename }}"
   tls_skip_verify = "{{ consul_tls_skip_verify }}"
@@ -81,7 +90,7 @@ telemetry {
 }
 {% endif %}
 
-disable_mlock    = "{{ vault_disable_mlock }}"
-api_addr         = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
-cluster_addr     = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
-ui               = "{{ vault_ui }}"
+disable_mlock = "{{ vault_disable_mlock }}"
+api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
+cluster_addr  = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
+ui            = "{{ vault_ui_enable }}"
