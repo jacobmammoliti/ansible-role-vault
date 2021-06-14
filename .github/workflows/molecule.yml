@@ -7,21 +7,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.6, 3.7]
     steps:
-      - uses: actions/checkout@v2
-        with:
-          path: molecule_demo
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
       - name: Install dependencies
         run: |
-          pwd && ls
           python3 -m pip install molecule
       - name: Test with molecule
         run: |
