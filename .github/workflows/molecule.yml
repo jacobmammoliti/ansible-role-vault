@@ -19,5 +19,8 @@ jobs:
       - name: Install dependencies
         run: pip3 install ansible molecule[docker] yamllint ansible-lint
 
-      - name: Test with molecule
-        run: molecule test
+      - name: Testing Vault with file storage
+        run: molecule test -s default
+
+      - name: Testing Vault with integrated storage
+        run: molecule test -s integrated

@@ -84,6 +84,7 @@
     group: '{{ vault_group }}'
     mode: '0400'
   with_items:
+  - '{{ vault_tls_ca_cert_file | default([]) }}'
   - '{{ vault_tls_cert_file }}'
   - '{{ vault_tls_key_file }}'
   when: not vault_tls_disable
