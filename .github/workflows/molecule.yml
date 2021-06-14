@@ -1,0 +1,23 @@
+---
+name: Molecule test
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip3 install ansible molecule[docker] yamllint ansible-lint
+
+      - name: Test with molecule
+        run: molecule test

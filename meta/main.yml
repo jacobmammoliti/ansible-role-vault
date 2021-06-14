@@ -1,15 +1,14 @@
 galaxy_info:
-  author: arqticjacob
-  description: Installs HashiCorp Vault
+  role_name: vault
+  author: jacobmammoliti
+  description: Install HashiCorp Vault
   license: BSD
-  min_ansible_version: 2.4
+  min_ansible_version: 2.11
   platforms:
     - name: Ubuntu
       versions:
-      - all
-    - name: Debian
-      versions:
-      - all
+        - 20.04
+        - 18.04
   galaxy_tags:
     - hashicorp
     - vault
