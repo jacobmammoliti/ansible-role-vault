@@ -18,6 +18,8 @@ listener "tcp" {
 {% endif %}
 
 {% if vault_storage_backend == "integrated" %}
+disable_mlock = "True"
+
 storage "raft" {
   path    = "{{ vault_data_directory }}/raft"
   node_id = "{{ ansible_fqdn }}"
@@ -35,6 +37,8 @@ storage "raft" {
 {% endfor %}
 }
 {% elif vault_storage_backend == "consul" %}
+disable_mlock = "False"
+
 storage "consul" {
   address = "127.0.0.1:{{ consul_http_port }}"
   scheme  = "{{ consul_scheme }}"
@@ -93,7 +97,6 @@ telemetry {
 }
 {% endif %}
 
-disable_mlock = "{{ vault_disable_mlock }}"
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
 cluster_addr  = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
 ui            = "{{ vault_ui_enable }}"
