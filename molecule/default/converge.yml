@@ -1,9 +1,7 @@
 ---
 - name: Converge
-  hosts: localhost
-  connection: local
-  become: true
+  hosts: all
   tasks:
-    - name: "Include ansible-vault-role"
+    - name: Include ansible-role-vault
       include_role:
-        name: "ansible-role-vault"
+        name: ansible-role-vault
