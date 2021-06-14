@@ -192,6 +192,11 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Directory that TLS certificates live in
 - Default value: `/etc/vault.d/tls`
 
+### `vault_tls_ca_cert_file`
+
+- Local path to the TLS CA certificate to copy over
+- Default value: `None`
+
 ### `vault_tls_cert_file`
 
 - Local path to the TLS signed certificate to copy over
