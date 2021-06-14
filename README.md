@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/arctiqjacob/ansible-role-vault.svg?branch=master)](https://travis-ci.org/arctiqjacob/ansible-role-vault)
-![Molecule Test](https://github.com/jacobmammoliti/ansible-role-vault/actions/workflows/molecule.yml/badge.svg)
+[![Molecule test](https://github.com/jacobmammoliti/ansible-role-vault/actions/workflows/molecule.yml/badge.svg)](https://github.com/jacobmammoliti/ansible-role-vault/actions/workflows/molecule.yml)
 
 # Ansible Role: Vault
 A role to deploy a production grade [HashiCorp Vault](https://www.vaultproject.io/).
