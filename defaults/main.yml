@@ -29,7 +29,6 @@ vault_ui_enable: true
 
 # options: file, integrated, consul
 vault_storage_backend: 'file'
-vault_disable_mlock: false
 
 # options: shamir, pkcs11, gcpkms
 vault_seal_type: 'shamir'
