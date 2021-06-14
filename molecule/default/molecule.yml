@@ -4,7 +4,8 @@ dependency:
 driver:
   name: delegated
 platforms:
-  - name: instance
+  - name: ubuntu
+    image: geerlingguy/docker-ubuntu2004-ansible
 provisioner:
   name: ansible
 verifier:
