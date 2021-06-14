@@ -1,5 +1,5 @@
 ---
-name: Molecule Test
+name: Molecule test
 on:
   pull_request:
     branches:
