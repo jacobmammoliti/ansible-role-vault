@@ -3,23 +3,29 @@
 # Ansible Role: Vault
 A role to deploy a production grade [HashiCorp Vault](https://www.vaultproject.io/).
 
+## Molecule Testing
+The following scenarios are currently run with Molecule via GitHub Actions on all pull requests to the `master` branch.
+
+- `default` tests a single Vault install on CentOS 8 with file storage
+- `integrated` tests a single Vault install on Ubuntu 20.04 with Integrated storage
+
 ## Role Variables
 Ansible variables are listed below, along with default values (see `defaults/main.yml`):
 
 ### `vault_user`
 
 - OS user
-- Default value: vault
+- Default value: `vault`
 
 ### `vault_group`
 
 - OS group
-- Default value: vault
+- Default value: `vault`
 
 ### `vault_create_account`
 
 - Whether to create the user and group defined by `vault_user` and `vault_group` or not
-- Default value: true
+- Default value: `true`
 
 ### `vault_home_directory`
 
@@ -40,6 +46,16 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 
 - Location of the Vault configuration file
 - Default value: `/etc/vault.d/vault.hcl`
+
+### `vault_plugin_directory`
+
+- Location of Vault's plugin directory
+- Default value: `/etc/vault.d/plugins`
+
+### `vault_enable_plugins`
+
+- Whether to create the plugins directory or not
+- Default value: `true`
 
 ### `vault_version`
 
@@ -80,103 +96,103 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_ui_enable`
 
 - Whether the UI is enabled or not
-- Default value: true
+- Default value: `true`
 
 ### `vault_storage_backend`
 
 - Storage backend to use
-- Default value: file
+- Default value: `file`
 
 ### `vault_telemetry`
 
 - Dictionary containing telemetry key-value data
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_type`
 
 - Seal type to use
-- Default value: shamir
+- Default value: `shamir`
 
 ### `vault_seal_gcp_project`
 
 - GCP project the KMS lives in
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_gcp_region`
 
 - GCP region the KMS lives in
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_gcp_key_ring`
 
 - Name of the KMS Keyring in GCP
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_gcp_crypto_key`
 
 - Name of the KMS Key in GCP
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_aws_region`
 
 - AWS region the KMS lives in
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_aws_access_key`
 
 - Name of the AWS access key
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_aws_secret_key`
 
 - Name of the AWS secret key
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_aws_kms_key_id`
 
 - AWS KMS key ID
-- Default value: None
+- Default value: `None`
 
 ### `vault_seal_aws_endpoint`
 
 - (optional) AWS KMS API endpoint. If not set, default API endpoint for region will be used.
-- Default value: None
+- Default value: `None`
 - [Vault API ref](https://www.vaultproject.io/docs/configuration/seal/awskms#endpoint)
 
 ### `vault_hsm_crypto_library`
 
 - Path to the HSM's local crypto library
-- Default value: None
+- Default value: `None`
 
 ### `vault_hsm_slot`
 
 - The HSM slot number
-- Default value: None
+- Default value: `None`
 
 ### `vault_hsm_pin`
 
 - The HSM pin Vault will use to connect
-- Default value: None
+- Default value: `None`
 
 ### `vault_hsm_generate_key`
 
 - Whether or not Vault to generate its own encryption key in the HSM
-- Default value: None
+- Default value: `None`
 
 ### `vault_hsm_key_label`
 
 - The encryption key label for Vault in the HSM
-- Default value: None
+- Default value: `None`
 
 ### `vault_hsm_hmac_key_label`
 
 - The encryption key HMAC label for Vault in the HSM
-- Default value: None
+- Default value: `None`
 
 ### `vault_tls_disable`
 
 - Whether to disable TLS or not
-- Default value: true
+- Default value: `true`
 
 ### `vault_tls_directory`
 
@@ -201,7 +217,7 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_tls_disable_client_certs`
 
 - Whether to disable client certificates or not
-- Default value: true
+- Default value: `true`
 
 ### `consul_http_port`
 
@@ -221,7 +237,7 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `consul_acl_enabled`
 
 - Whether Consul ACLs are enabled or not
-- Default value: false
+- Default value: `false`
 
 ### `consul_tls_directory`
 
@@ -246,12 +262,12 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `consul_tls_skip_verify`
 
 - Whether or not to skip verification of Consul TLS certificates
-- Default value: false
+- Default value: `false`
 
 ### `consul_vault_acl_token`
 
 - Vault's ACL token in Consul (requred if ACLS are enabled in Consul cluster)
-- Default value: None
+- Default value: `None`
 
 ## Dependencies
 - Consul cluster if using Consul as backend storage.

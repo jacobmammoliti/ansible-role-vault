@@ -17,6 +17,15 @@
     update_cache: true
   when: ansible_pkg_mgr == 'apt'
 
+- name: Installing Vault dependencies via dnf
+  ansible.builtin.dnf:
+    name:
+      - unzip
+      - curl
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'dnf'
+
 - name: Creating Vault group
   ansible.builtin.group:
     name: '{{ vault_group }}'
@@ -33,7 +42,7 @@
   when: vault_create_account
 
 - name: Creating Vault directories
-  file:
+  ansible.builtin.file:
     state: directory
     path: '{{ item }}'
     owner: '{{ vault_user }}'
@@ -44,8 +53,17 @@
     - '{{ vault_data_directory }}'
     - '{{ vault_install_directory }}'
 
+- name: Creating Vault plugin directory
+  ansible.builtin.file:
+    state: directory
+    path: '{{ vault_plugin_directory }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  when: vault_enable_plugins
+
 - name: Installing Vault binary from remote source
-  unarchive:
+  ansible.builtin.unarchive:
     src: '{{ vault_download }}'
     dest: '{{ vault_install_directory }}'
     owner: '{{ vault_user }}'
@@ -57,7 +75,7 @@
   when: vault_local_binary_location is not defined
 
 - name: Installing Vault binary from local source
-  copy:
+  ansible.builtin.copy:
     src: '{{ vault_local_binary_location }}'
     dest: '{{ vault_install_directory }}/{{ vault_local_binary_location | basename }}'
     owner: '{{ vault_user }}'
@@ -68,7 +86,7 @@
   when: vault_local_binary_location is defined
 
 - name: Creating TLS directory
-  file:
+  ansible.builtin.file:
     state: directory
     path: '{{ vault_tls_directory }}'
     owner: '{{ vault_user }}'
@@ -79,7 +97,7 @@
     - vault_tls_key_file is defined
 
 - name: Copying TLS certificates
-  copy:
+  ansible.builtin.copy:
     src: '{{ item }}'
     dest: '{{ vault_tls_directory }}/{{ item | basename }}'
     owner: '{{ vault_user }}'
@@ -96,7 +114,7 @@
     - Restart Vault
 
 - name: Creating Vault data directory
-  file:
+  ansible.builtin.file:
     state: directory
     path: '{{ vault_home_directory }}/data'
     owner: '{{ vault_user }}'
@@ -105,7 +123,7 @@
   when: vault_storage_backend == 'file'
 
 - name: Creating Vault Raft directory
-  file:
+  ansible.builtin.file:
     state: directory
     path: '{{ vault_data_directory }}/raft'
     owner: '{{ vault_user }}'
@@ -114,7 +132,7 @@
   when: vault_storage_backend == 'integrated'
 
 - name: Templating out Vault configuration
-  template:
+  ansible.builtin.template:
     src: vault.hcl.j2
     dest: '{{ vault_config_file }}'
     owner: '{{ vault_user }}'
@@ -124,7 +142,7 @@
     - Restart Vault
 
 - name: Templating out systemd script
-  template:
+  ansible.builtin.template:
     src: vault.systemd.j2
     dest: /etc/systemd/system/vault.service
     owner: root
@@ -133,8 +151,8 @@
   notify:
     - Reload Vault daemon
 
-- name: Starting and Enabling Vault
-  systemd:
+- name: Starting and enabling Vault
+  ansible.builtin.systemd:
     name: vault
     enabled: true
     state: started

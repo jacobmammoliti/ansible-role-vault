@@ -22,5 +22,6 @@ provisioner:
         vault_tls_ca_cert_file: 'tls/ca.pem'
         vault_tls_cert_file: 'tls/cert.pem'
         vault_tls_key_file: 'tls/key.pem'
+        vault_enable_plugins: true
 verifier:
   name: ansible

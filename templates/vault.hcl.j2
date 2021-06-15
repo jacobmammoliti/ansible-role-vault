@@ -95,6 +95,10 @@ telemetry {
 }
 {% endif %}
 
+{% if vault_enable_plugins %}
+plugin_directory = "{{ vault_plugin_directory }}"
+{% endif %}
+
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
 cluster_addr  = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
 ui            = "{{ vault_ui_enable }}"

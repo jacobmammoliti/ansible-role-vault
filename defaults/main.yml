@@ -9,6 +9,9 @@ vault_install_directory: '{{ vault_data_directory }}/bin'
 vault_tls_directory: '{{ vault_home_directory }}/tls'
 vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
+vault_enable_plugins: false
+vault_plugin_directory: '{{ vault_home_directory }}/plugins'
+
 vault_architecture_map:
   amd64: amd64
   x86_64: amd64
