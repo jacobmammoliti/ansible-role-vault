@@ -1,10 +1,10 @@
 ---
-- name: restart vault
+- name: Restart Vault
   systemd:
     name: vault
     state: restarted
 
-- name: reload vault daemon
+- name: Reload Vault daemon
   systemd:
     name: vault
     state: restarted

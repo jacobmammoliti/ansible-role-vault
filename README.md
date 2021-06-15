@@ -56,15 +56,11 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Full URL location to download vault
 - Default value: `https://releases.hashicorp.com/vault/1.7.2/vault_1.7.2_linux_amd64.zip`
 
-### `vault_local_binary`
-
-- Whether to use a binary stored locally (this is mutually exclusive with the three above variables)
-- Default value: false
 
 ### `vault_local_binary_location`
 
 - Location of the local binary
-- Default value: `binary/vault`
+- Default value: `None`
 
 ### `vault_client_addr`
 

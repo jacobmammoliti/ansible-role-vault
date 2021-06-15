@@ -1,38 +1,38 @@
 ---
-- name: installing vault dependencies via yum
-  yum:
+- name: Installing Vault dependencies via yum
+  ansible.builtin.yum:
     name:
       - unzip
       - curl
     state: present
-    update_cache: yes
+    update_cache: true
   when: ansible_pkg_mgr == 'yum'
 
-- name: installing vault dependencies via apt
-  apt:
+- name: Installing Vault dependencies via apt
+  ansible.builtin.apt:
     name:
       - unzip
       - curl
     state: present
-    update_cache: yes
+    update_cache: true
   when: ansible_pkg_mgr == 'apt'
 
-- name: creating vault group
-  group:
+- name: Creating Vault group
+  ansible.builtin.group:
     name: '{{ vault_group }}'
-    system: yes
+    system: true
   when: vault_create_account
 
-- name: creating vault user
-  user:
+- name: Creating Vault user
+  ansible.builtin.user:
     name: '{{ vault_user }}'
     home: '{{ vault_home_directory }}'
     group: '{{ vault_group }}'
     shell: /sbin/nologin
-    system: yes
+    system: true
   when: vault_create_account
 
-- name: creating vault directories
+- name: Creating Vault directories
   file:
     state: directory
     path: '{{ item }}'
@@ -40,23 +40,23 @@
     group: '{{ vault_group }}'
     mode: '0750'
   with_items:
-  - '{{ vault_home_directory }}'
-  - '{{ vault_data_directory }}'
-  - '{{ vault_install_directory }}'
+    - '{{ vault_home_directory }}'
+    - '{{ vault_data_directory }}'
+    - '{{ vault_install_directory }}'
 
-- name: installing vault binary from remote
+- name: Installing Vault binary from remote source
   unarchive:
     src: '{{ vault_download }}'
     dest: '{{ vault_install_directory }}'
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
-    remote_src: yes
+    remote_src: true
     mode: '0770'
   notify:
-    - restart vault
-  when: not vault_local_binary
+    - Restart Vault
+  when: vault_local_binary_location is not defined
 
-- name: installing vault binary from local
+- name: Installing Vault binary from local source
   copy:
     src: '{{ vault_local_binary_location }}'
     dest: '{{ vault_install_directory }}/{{ vault_local_binary_location | basename }}'
@@ -64,19 +64,21 @@
     group: '{{ vault_group }}'
     mode: '0770'
   notify:
-    - restart vault
-  when: vault_local_binary
+    - Restart Vault
+  when: vault_local_binary_location is defined
 
-- name: creating TLS directory
+- name: Creating TLS directory
   file:
     state: directory
     path: '{{ vault_tls_directory }}'
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0750'
-  when: not vault_tls_disable
+  when:
+    - vault_tls_cert_file is defined
+    - vault_tls_key_file is defined
 
-- name: copying over TLS certificates
+- name: Copying TLS certificates
   copy:
     src: '{{ item }}'
     dest: '{{ vault_tls_directory }}/{{ item | basename }}'
@@ -84,14 +86,16 @@
     group: '{{ vault_group }}'
     mode: '0400'
   with_items:
-  - '{{ vault_tls_ca_cert_file | default([]) }}'
-  - '{{ vault_tls_cert_file }}'
-  - '{{ vault_tls_key_file }}'
-  when: not vault_tls_disable
+    - '{{ vault_tls_ca_cert_file | default([]) }}'
+    - '{{ vault_tls_cert_file }}'
+    - '{{ vault_tls_key_file }}'
+  when:
+    - vault_tls_cert_file is defined
+    - vault_tls_key_file is defined
   notify:
-    - restart vault
+    - Restart Vault
 
-- name: creating vault data directory
+- name: Creating Vault data directory
   file:
     state: directory
     path: '{{ vault_home_directory }}/data'
@@ -100,7 +104,7 @@
     mode: '0750'
   when: vault_storage_backend == 'file'
 
-- name: creating vault raft directory
+- name: Creating Vault Raft directory
   file:
     state: directory
     path: '{{ vault_data_directory }}/raft'
@@ -109,7 +113,7 @@
     mode: '0750'
   when: vault_storage_backend == 'integrated'
 
-- name: templating out vault configuration
+- name: Templating out Vault configuration
   template:
     src: vault.hcl.j2
     dest: '{{ vault_config_file }}'
@@ -117,9 +121,9 @@
     group: '{{ vault_group }}'
     mode: '0640'
   notify:
-    - restart vault
+    - Restart Vault
 
-- name: templating out systemd script
+- name: Templating out systemd script
   template:
     src: vault.systemd.j2
     dest: /etc/systemd/system/vault.service
@@ -127,10 +131,10 @@
     group: root
     mode: '0640'
   notify:
-    - reload vault daemon
+    - Reload Vault daemon
 
-- name: starting and enabling Vault
+- name: Starting and Enabling Vault
   systemd:
     name: vault
-    enabled: yes
+    enabled: true
     state: started

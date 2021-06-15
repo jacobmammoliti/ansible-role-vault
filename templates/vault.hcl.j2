@@ -1,12 +1,6 @@
-{% if vault_tls_disable == True %}
-{% set proto="http" %}
 listener "tcp" {
-  address     = "{{ vault_client_addr }}:{{ vault_http_port }}"
-  tls_disable = "{{ vault_tls_disable }}"
-}
-{% else %}
+{% if vault_tls_cert_file is defined and vault_tls_key_file is defined %}
 {% set proto="https" %}
-listener "tcp" {
   address                  = "{{ vault_client_addr }}:{{ vault_http_port }}"
 {% if vault_tls_ca_cert_file is defined %}
   tls_ca_cert_file         = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
@@ -14,8 +8,12 @@ listener "tcp" {
   tls_cert_file            = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
   tls_key_file             = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
   tls_disable_client_certs = "{{ vault_tls_disable_client_certs }}"
-}
+{% else %}
+{% set proto="http" %}
+  address     = "{{ vault_client_addr }}:{{ vault_http_port }}"
+  tls_disable = "True"
 {% endif %}
+}
 
 {% if vault_storage_backend == "integrated" %}
 disable_mlock = "True"
@@ -26,7 +24,7 @@ storage "raft" {
 {% for vault_server in groups['vault'] if not vault_server == ansible_fqdn %}
   retry_join {
     leader_api_addr         = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
-{% if vault_tls_disable == False %}
+{% if proto == "https" %}
 {% if vault_tls_ca_cert_file is defined %}
     leader_ca_cert_file     = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
 {% endif %}

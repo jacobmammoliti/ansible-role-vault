@@ -6,6 +6,7 @@ vault_create_account: true
 vault_home_directory: '/etc/vault.d'
 vault_data_directory: '/opt/vault'
 vault_install_directory: '{{ vault_data_directory }}/bin'
+vault_tls_directory: '{{ vault_home_directory }}/tls'
 vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
 vault_architecture_map:
@@ -19,8 +20,6 @@ vault_os: '{{ ansible_system|lower }}'
 vault_architecture: '{{ vault_architecture_map[ansible_architecture] }}'
 vault_archive: 'vault_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }}.zip'
 vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
-vault_local_binary: false
-vault_local_binary_location: 'binary/vault'
 
 vault_client_addr: '0.0.0.0'
 vault_http_port: '8200'
@@ -33,11 +32,7 @@ vault_storage_backend: 'file'
 # options: shamir, pkcs11, gcpkms
 vault_seal_type: 'shamir'
 
-vault_tls_disable: true
-vault_tls_directory: '{{ vault_home_directory }}/tls'
-vault_tls_cert_file: 'tls/dc1-server-consul-0.pem'
-vault_tls_key_file: 'tls/dc1-server-consul-0-key.pem'
-vault_tls_disable_client_certs: true
+vault_tls_disable_client_certs: false
 
 # Set to false on RHEL7 (systemd v219). Otherwise unit file includes invalid parameters for this systemd version.
 vault_newsystemdversion: true
@@ -46,6 +41,5 @@ vault_home_usr: false
 
 consul_http_port: '8500'
 consul_scheme: 'http'
-consul_tls_enabled: false
 consul_tls_skip_verify: false
 consul_vault_kv_path: 'vault/'
