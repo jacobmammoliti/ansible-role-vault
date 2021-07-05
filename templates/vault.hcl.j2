@@ -21,6 +21,16 @@ disable_mlock = "True"
 storage "raft" {
   path    = "{{ vault_data_directory }}/raft"
   node_id = "{{ ansible_fqdn }}"
+{% if cloud == "gcp" %}
+  retry_join {
+    auto_join             = "provider=gce region={{ gcp_region }} tag_value={{ gcp_tag }}"
+    auto_join_scheme      = "https"
+{% if vault_tls_ca_cert_file is defined %}
+    leader_ca_cert_file     = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
+{% endif %}
+    leader_tls_servername = "{{ ansible_fqdn }}"
+  }
+{% else %}
 {% for vault_server in groups['vault'] if not vault_server == ansible_fqdn %}
   retry_join {
     leader_api_addr         = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
@@ -33,6 +43,7 @@ storage "raft" {
 {% endif %}
   }
 {% endfor %}
+{% endif %}
 }
 {% elif vault_storage_backend == "consul" %}
 disable_mlock = "False"

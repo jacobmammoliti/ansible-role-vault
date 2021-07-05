@@ -72,7 +72,6 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Full URL location to download vault
 - Default value: `https://releases.hashicorp.com/vault/1.7.2/vault_1.7.2_linux_amd64.zip`
 
-
 ### `vault_local_binary_location`
 
 - Location of the local binary
@@ -218,6 +217,22 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 
 - Whether to disable client certificates or not
 - Default value: `true`
+
+### `cloud`
+
+- The cloud provider Vault will be deployed to
+- Use `gcp` for Google Cloud Platform; leave blank for on-prem
+- Default value: `None`
+
+### `gcp_region`
+
+- The GCP region for auto-join (only needed if using GCP)
+- Default value: `None`
+
+### `gcp_tag`
+
+- The Compute Instance tag for auto-join (only needed if using GCP)
+- Default value: `None`
 
 ### `consul_http_port`
 
