@@ -51,7 +51,6 @@
   with_items:
     - '{{ vault_home_directory }}'
     - '{{ vault_data_directory }}'
-    - '{{ vault_install_directory }}'
 
 - name: Creating Vault plugin directory
   ansible.builtin.file:
