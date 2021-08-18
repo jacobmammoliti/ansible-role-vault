@@ -29,6 +29,8 @@ vault_http_port: '8200'
 vault_api_port: '8201'
 vault_ui_enable: true
 
+cloud: 'none'
+
 # options: file, integrated, consul
 vault_storage_backend: 'file'
 
