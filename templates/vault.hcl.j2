@@ -110,8 +110,8 @@ telemetry {
 plugin_directory = "{{ vault_plugin_directory }}"
 {% endif %}
 
-{% if vault_version[0:3] | float >= "1.8" | float %}
-license_path = "{{ vault_license_path }}"
+{% if vault_license_file is defined %}
+license_path = "{{ vault_data_directory }}/{{ vault_license_file | basename }}"
 {% endif %}
 
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
