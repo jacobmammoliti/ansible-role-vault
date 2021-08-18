@@ -8,30 +8,13 @@ ConditionFileNotEmpty={{ vault_config_file }}
 [Service]
 User={{ vault_user }}
 Group={{ vault_group }}
-LogLevel=info
-
-# Sandboxing settings to improve the security of the host by restricting vault privileges and access
-{% if vault_home_usr == False %}
-# ProtectSystem cannot be used when Vault home and data are in /usr folder.
-ProtectSystem=true
 ProtectSystem=full
-{% endif %}
 ProtectHome=read-only
 PrivateTmp=yes
 PrivateDevices=yes
-
-# Configure the capabilities of the vault process, particularly to lock memory.
-# (support for multiple systemd versions)
 SecureBits=keep-caps
 AmbientCapabilities=CAP_IPC_LOCK
-Capabilities=CAP_IPC_LOCK+ep
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
-
-# Limit the number of file descriptors to the configured value and prevent memory being swapped to disk
-LimitNOFILE=65536
-LimitMEMLOCK=infinity
-
-# Prevent vault and any child process from gaining new privileges
 NoNewPrivileges=yes
 ExecStart={{ vault_install_directory }}/vault server -config={{ vault_home_directory }}
 ExecReload=/bin/kill --signal HUP $MAINPID
@@ -40,6 +23,8 @@ KillSignal=SIGINT
 Restart=on-failure
 RestartSec=5
 TimeoutStopSec=30
+LimitNOFILE=65536
+LimitMEMLOCK=infinity
 {% if vault_newsystemdversion == True %}
 # StartLimitIntervalSec and StartLimitBurst are available in systemd v230 and later (check your version with systemctl --version)
 # e.g., these two options cannot be used with RHEL7 (systemd 219) and starting the Vault service would error out

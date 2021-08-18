@@ -1,0 +1,26 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    groups:
+      - vault
+    image: geerlingguy/docker-ubuntu2004-ansible
+    command: ''
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      vault:
+        vault_storage_backend: 'integrated'
+        vault_tls_ca_cert_file: 'tls/ca.pem'
+        vault_tls_cert_file: 'tls/cert.pem'
+        vault_tls_key_file: 'tls/key.pem'
+        vault_enable_plugins: true
+        packer_build: true

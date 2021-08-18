@@ -1,11 +1,13 @@
 ---
+packer_build: false
+
 vault_user: 'vault'
 vault_group: 'vault'
 vault_create_account: true
 
 vault_home_directory: '/etc/vault.d'
 vault_data_directory: '/opt/vault'
-vault_install_directory: '{{ vault_data_directory }}/bin'
+vault_install_directory: '/usr/bin'
 vault_tls_directory: '{{ vault_home_directory }}/tls'
 vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
@@ -18,7 +20,7 @@ vault_architecture_map:
   armv7l: arm
   aarch64: arm64
 
-vault_version: '1.7.2'
+vault_version: '1.8.1'
 vault_os: '{{ ansible_system|lower }}'
 vault_architecture: '{{ vault_architecture_map[ansible_architecture] }}'
 vault_archive: 'vault_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }}.zip'
@@ -29,18 +31,19 @@ vault_http_port: '8200'
 vault_api_port: '8201'
 vault_ui_enable: true
 
+# options: none, gcp
+cloud: 'none'
+
 # options: file, integrated, consul
-vault_storage_backend: 'file'
+vault_storage_backend: 'integrated'
 
 # options: shamir, pkcs11, gcpkms
 vault_seal_type: 'shamir'
 
-vault_tls_disable_client_certs: false
+vault_tls_disable_client_certs: true
 
 # Set to false on RHEL7 (systemd v219). Otherwise unit file includes invalid parameters for this systemd version.
 vault_newsystemdversion: true
-# Set to true if Vault home and data are in /usr folder. Aspects of systemd sandboxing cannot be used with /usr.
-vault_home_usr: false
 
 consul_http_port: '8500'
 consul_scheme: 'http'
