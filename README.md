@@ -60,22 +60,27 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_version`
 
 - Version of Vault to download and install
-- Default value: `1.7.2`
+- Default value: `1.8.1`
 
 ### `vault_archive`
 
 - Name of the Vault file archive to download
-- Default value: `vault_1.7.2_linux_amd64.zip`
+- Default value: `vault_1.8.1_linux_amd64.zip`
 
 ### `vault_download`
 
 - Full URL location to download vault
-- Default value: `https://releases.hashicorp.com/vault/1.7.2/vault_1.7.2_linux_amd64.zip`
+- Default value: `https://releases.hashicorp.com/vault/1.8.1/vault_1.8.1_linux_amd64.zip`
 
 ### `vault_local_binary_location`
 
 - Location of the local binary
 - Default value: `None`
+
+### `vault_vault_license_path`
+
+- Location of the Vault license file
+- Default value: `/opt/vault/vault.hclic`
 
 ### `vault_client_addr`
 

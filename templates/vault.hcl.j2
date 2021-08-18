@@ -11,12 +11,12 @@ listener "tcp" {
 {% else %}
 {% set proto="http" %}
   address     = "{{ vault_client_addr }}:{{ vault_http_port }}"
-  tls_disable = "True"
+  tls_disable = true
 {% endif %}
 }
 
 {% if vault_storage_backend == "integrated" %}
-disable_mlock = "True"
+disable_mlock = true
 
 storage "raft" {
   path    = "{{ vault_data_directory }}/raft"
@@ -46,7 +46,7 @@ storage "raft" {
 {% endif %}
 }
 {% elif vault_storage_backend == "consul" %}
-disable_mlock = "False"
+disable_mlock = false
 
 storage "consul" {
   address = "127.0.0.1:{{ consul_http_port }}"
@@ -108,6 +108,10 @@ telemetry {
 
 {% if vault_enable_plugins %}
 plugin_directory = "{{ vault_plugin_directory }}"
+{% endif %}
+
+{% if vault_version[0:3] | float >= "1.8" | float %}
+license_path = "{{ vault_license_path }}"
 {% endif %}
 
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"

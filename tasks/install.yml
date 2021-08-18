@@ -113,6 +113,17 @@
   notify:
     - Restart Vault
 
+- name: Copying Vault license file
+  ansible.builtin.copy:
+    src: '{{ vault_license_path }}'
+    dest: '{{ vault_data_directory }}/{{ vault_license_path | basename }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0600'
+  when:
+    - '{{ vault_version[0:3] | float }} >= "1.8" | float'
+    - '"ent" in vault_download'
+
 - name: Creating Vault data directory
   ansible.builtin.file:
     state: directory
