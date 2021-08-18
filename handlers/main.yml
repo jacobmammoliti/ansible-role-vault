@@ -3,9 +3,13 @@
   systemd:
     name: vault
     state: restarted
+  when:
+    - not packer_build
 
 - name: Reload Vault daemon
   systemd:
     name: vault
     state: restarted
     daemon_reload: yes
+  when:
+    - not packer_build
