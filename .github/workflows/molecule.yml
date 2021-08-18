@@ -25,5 +25,5 @@ jobs:
       - name: Testing Vault with integrated storage on Ubuntu 20.04 with TLS
         run: molecule test -s ubuntu2004-integrated-tls
 
-      - name: Testing a Packer iamge build of Vault with integrated storage on Ubuntu 20.04
+      - name: Testing a Packer image build of Vault with integrated storage on Ubuntu 20.04
         run: molecule test -s ubuntu2004-integrated-packer
