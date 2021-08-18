@@ -42,8 +42,6 @@ vault_tls_disable_client_certs: true
 
 # Set to false on RHEL7 (systemd v219). Otherwise unit file includes invalid parameters for this systemd version.
 vault_newsystemdversion: true
-# Set to true if Vault home and data are in /usr folder. Aspects of systemd sandboxing cannot be used with /usr.
-vault_home_usr: false
 
 consul_http_port: '8500'
 consul_scheme: 'http'
