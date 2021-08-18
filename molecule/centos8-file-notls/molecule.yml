@@ -5,6 +5,8 @@ driver:
   name: docker
 platforms:
   - name: instance
+    groups:
+      - vault
     image: geerlingguy/docker-centos8-ansible
     command: ''
     volumes:
