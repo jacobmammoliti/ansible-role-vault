@@ -13,5 +13,9 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
+  inventory:
+    group_vars:
+      vault:
+        vault_storage_backend: 'file'
 verifier:
   name: ansible
