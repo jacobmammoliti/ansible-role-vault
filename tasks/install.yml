@@ -154,7 +154,7 @@
 - name: Templating out systemd script
   ansible.builtin.template:
     src: vault.systemd.j2
-    dest: /etc/systemd/system/vault.service
+    dest: /lib/systemd/system/vault.service
     owner: root
     group: root
     mode: '0640'
