@@ -91,9 +91,6 @@
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0750'
-  when:
-    - vault_tls_cert_file is defined
-    - vault_tls_key_file is defined
 
 - name: Copying TLS certificates
   ansible.builtin.copy:
@@ -109,6 +106,7 @@
   when:
     - vault_tls_cert_file is defined
     - vault_tls_key_file is defined
+    - not packer_build
   notify:
     - Restart Vault
 
@@ -121,6 +119,7 @@
     mode: '0600'
   when:
     - vault_license_file is defined
+    - not packer_build
 
 - name: Creating Vault data directory
   ansible.builtin.file:
@@ -147,6 +146,8 @@
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0640'
+  when:
+    - not packer_build
   notify:
     - Restart Vault
 
@@ -157,6 +158,8 @@
     owner: root
     group: root
     mode: '0640'
+  when:
+    - not packer_build
   notify:
     - Reload Vault daemon
 
@@ -165,3 +168,5 @@
     name: vault
     enabled: true
     state: started
+  when:
+    - not packer_build

@@ -1,4 +1,6 @@
 ---
+packer_build: false
+
 vault_user: 'vault'
 vault_group: 'vault'
 vault_create_account: true
