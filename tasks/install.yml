@@ -91,6 +91,10 @@
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0750'
+  when:
+    - vault_tls_cert_file is defined
+    - vault_tls_key_file is defined
+    - not packer_build
 
 - name: Copying TLS certificates
   ansible.builtin.copy:
