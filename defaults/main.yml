@@ -20,7 +20,7 @@ vault_architecture_map:
   armv7l: arm
   aarch64: arm64
 
-vault_version: '1.8.1'
+vault_version: '1.8.2'
 vault_os: '{{ ansible_system|lower }}'
 vault_architecture: '{{ vault_architecture_map[ansible_architecture] }}'
 vault_archive: 'vault_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }}.zip'
