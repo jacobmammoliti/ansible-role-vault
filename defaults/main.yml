@@ -7,7 +7,7 @@ vault_create_account: true
 
 vault_home_directory: '/etc/vault.d'
 vault_data_directory: '/opt/vault'
-vault_install_directory: '/usr/bin'
+vault_install_directory: '/opt/vault/bin'
 vault_tls_directory: '{{ vault_home_directory }}/tls'
 vault_config_file: '{{ vault_home_directory }}/vault.hcl'
 
