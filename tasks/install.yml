@@ -47,13 +47,22 @@
     path: '{{ item }}'
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
-    mode: '0755'
+    mode: '0750'
   with_items:
     - '{{ vault_home_directory }}'
     - '{{ vault_data_directory }}'
-    - '{{ vault_install_directory }}'
     - '{{ vault_tls_directory }}'
     - '{{ vault_license_directory }}'
+    - '{{ vault_data_directory }}/data'
+
+- name: Creating Vault bin directory
+  ansible.builtin.file:
+    state: directory
+    path: '{{ vault_install_directory }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  when: vault_install_directory != "/usr/bin"
 
 - name: Creating Vault plugin directory
   ansible.builtin.file:
@@ -61,7 +70,7 @@
     path: '{{ vault_plugin_directory }}'
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
-    mode: '0755'
+    mode: '0750'
   when: vault_enable_plugins
 
 - name: Installing Vault binary from remote source
@@ -115,17 +124,6 @@
   when:
     - vault_license_file is defined
     - not packer_build
-
-- name: Creating Vault data directory
-  ansible.builtin.file:
-    state: directory
-    path: '{{ vault_home_directory }}/data'
-    owner: '{{ vault_user }}'
-    group: '{{ vault_group }}'
-    mode: '0755'
-  when: 
-    - vault_storage_backend == 'file'
-    - vault_storage_backend == 'integrated'
 
 - name: Templating out Vault configuration
   ansible.builtin.template:
