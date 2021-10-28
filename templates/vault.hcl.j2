@@ -108,7 +108,7 @@ plugin_directory = "{{ vault_plugin_directory }}"
 {% endif %}
 
 {% if vault_license_file is defined %}
-license_path = "{{ vault_data_directory }}/{{ vault_license_file | basename }}"
+license_path = "{{ vault_license_directory }}/{{ vault_license_file | basename }}"
 {% endif %}
 
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
