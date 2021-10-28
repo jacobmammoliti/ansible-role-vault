@@ -1,6 +1,8 @@
 ---
 packer_build: false
 
+vault_ansible_group: 'vault'
+
 vault_user: 'vault'
 vault_group: 'vault'
 vault_create_account: true

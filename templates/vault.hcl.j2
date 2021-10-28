@@ -28,7 +28,7 @@ storage "raft" {
     leader_tls_servername = "{{ ansible_fqdn }}"
   }
 {% else %}
-{% for vault_server in groups['vault'] %}
+{% for vault_server in groups[vault_ansible_group] %}
   retry_join {
     leader_api_addr         = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
 {% if proto == "https" %}
