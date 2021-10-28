@@ -16,7 +16,7 @@ listener "tcp" {
 disable_mlock = true
 
 storage "raft" {
-  path    = "{{ vault_data_directory }}/raft"
+  path    = "{{ vault_data_directory }}/data"
   node_id = "{{ ansible_fqdn }}"
 {% if cloud == "gcp" %}
   retry_join {
