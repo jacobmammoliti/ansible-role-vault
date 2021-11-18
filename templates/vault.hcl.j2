@@ -38,7 +38,7 @@ storage "raft" {
 {% elif cloud.provider == "azure" %}
     auto_join             = "provider=azure subscription_id={{ cloud.azure_subscription_id }} resource_group={{ cloud.azure_resource_group }} vm_scale_set={{ cloud.azure_vm_scale_set }}"
 {% elif cloud.provider == "aws" %}
-    auto_join             = "provider=aws tag_key={{ cloud.aws_tag_key }} tag_vale={{ cloud.aws_tag_value }}"
+    auto_join             = "provider=aws tag_key={{ cloud.aws_tag_key }} tag_value={{ cloud.aws_tag_value }}"
 {% endif %}
     auto_join_scheme      = "https"
 {% if vault_tls_ca_cert_file is defined %}
