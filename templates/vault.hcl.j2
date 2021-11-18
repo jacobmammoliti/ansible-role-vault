@@ -4,7 +4,7 @@ listener "tcp" {
   address                  = "{{ vault_client_addr }}:{{ vault_http_port }}"
   tls_cert_file            = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
   tls_key_file             = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
-  tls_disable_client_certs = "{{ vault_tls_disable_client_certs }}"
+  tls_disable_client_certs = {{ vault_tls_disable_client_certs | lower }}
 {% else %}
 {% set proto="http" %}
   address     = "{{ vault_client_addr }}:{{ vault_http_port }}"
@@ -18,7 +18,7 @@ disable_mlock = true
 storage "raft" {
   path    = "{{ vault_data_directory }}/data"
   node_id = "{{ ansible_fqdn }}"
-{% if cloud == "none" %}
+{% if cloud.provider == "none" %}
 {% for vault_server in groups[vault_ansible_group] %}
   retry_join {
     leader_api_addr         = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
@@ -32,13 +32,13 @@ storage "raft" {
   }
 {% endfor %}
 {% else %}
- retry_join {
-{% if cloud == "gce" %}
-    auto_join             = "provider=gce tag_value={{ gce_tag }}"
-{% elif cloud == "azure" %}
-    auto_join             = "provider=azure subscription_id={{ azure_subscription_id }} resource_group={{ azure_resource_group }} vm_scale_set={{ azure_vm_scale_set }}"
-{% elif cloud == "aws" %}
-    auto_join             = "provider=aws tag_key={{ aws_tag_key }} tag_vale={{ aws_tag_value }}"
+  retry_join {
+{% if cloud.provider == "gce" %}
+    auto_join             = "provider=gce tag_value={{ cloud.gce_tag }}"
+{% elif cloud.provider == "azure" %}
+    auto_join             = "provider=azure subscription_id={{ cloud.azure_subscription_id }} resource_group={{ cloud.azure_resource_group }} vm_scale_set={{ cloud.azure_vm_scale_set }}"
+{% elif cloud.provider == "aws" %}
+    auto_join             = "provider=aws tag_key={{ cloud.aws_tag_key }} tag_vale={{ cloud.aws_tag_value }}"
 {% endif %}
     auto_join_scheme      = "https"
 {% if vault_tls_ca_cert_file is defined %}
@@ -46,6 +46,7 @@ storage "raft" {
 {% endif %}
     leader_tls_servername = "{{ ansible_fqdn }}"
   }
+{% endif %}
 }
 {% elif vault_storage_backend == "consul" %}
 disable_mlock = false
@@ -96,4 +97,4 @@ license_path = "{{ vault_license_directory }}/{{ vault_license_file | basename }
 
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
 cluster_addr  = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
-ui            = "{{ vault_ui_enable }}"
+ui            = {{ vault_ui_enable | lower }}

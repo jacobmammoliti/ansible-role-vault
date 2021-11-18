@@ -35,7 +35,8 @@ vault_api_port: '8201'
 vault_ui_enable: true
 
 # options: none, gce, azure, aws
-cloud: 'none'
+cloud:
+  provider: 'none'
 
 # options: file, integrated, consul
 vault_storage_backend: 'integrated'
@@ -44,9 +45,6 @@ vault_seal:
   type: 'shamir'
 
 vault_tls_disable_client_certs: true
-
-# Set to false on RHEL7 (systemd v219). Otherwise unit file includes invalid parameters for this systemd version.
-vault_newsystemdversion: true
 
 consul_http_port: '8500'
 consul_scheme: 'http'
