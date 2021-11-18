@@ -75,7 +75,7 @@ storage "file" {
 
 seal "{{ vault_seal.type }}" {
 {% for item in vault_seal if not item == "type" %}
-  {{ item }} = {{ vault_seal[item] }}
+  {{ item }} = "{{ vault_seal[item] }}"
 {% endfor %}
 }
 
