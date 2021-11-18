@@ -60,17 +60,17 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_version`
 
 - Version of Vault to download and install
-- Default value: `1.8.2`
+- Default value: `1.9.0`
 
 ### `vault_archive`
 
 - Name of the Vault file archive to download
-- Default value: `vault_1.8.2_linux_amd64.zip`
+- Default value: `vault_1.9.0_linux_amd64.zip`
 
 ### `vault_download`
 
 - Full URL location to download vault
-- Default value: `https://releases.hashicorp.com/vault/1.8.2/vault_1.8.2_linux_amd64.zip`
+- Default value: `https://releases.hashicorp.com/vault/1.9.2/vault_1.9.2_linux_amd64.zip`
 
 ### `vault_local_binary_location`
 
@@ -116,82 +116,6 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 
 - Seal type to use
 - Default value: `shamir`
-
-### `vault_seal_gcp_project`
-
-- GCP project the KMS lives in
-- Default value: `None`
-
-### `vault_seal_gcp_region`
-
-- GCP region the KMS lives in
-- Default value: `None`
-
-### `vault_seal_gcp_key_ring`
-
-- Name of the KMS Keyring in GCP
-- Default value: `None`
-
-### `vault_seal_gcp_crypto_key`
-
-- Name of the KMS Key in GCP
-- Default value: `None`
-
-### `vault_seal_aws_region`
-
-- AWS region the KMS lives in
-- Default value: `None`
-
-### `vault_seal_aws_access_key`
-
-- Name of the AWS access key
-- Default value: `None`
-
-### `vault_seal_aws_secret_key`
-
-- Name of the AWS secret key
-- Default value: `None`
-
-### `vault_seal_aws_kms_key_id`
-
-- AWS KMS key ID
-- Default value: `None`
-
-### `vault_seal_aws_endpoint`
-
-- (optional) AWS KMS API endpoint. If not set, default API endpoint for region will be used.
-- Default value: `None`
-- [Vault API ref](https://www.vaultproject.io/docs/configuration/seal/awskms#endpoint)
-
-### `vault_hsm_crypto_library`
-
-- Path to the HSM's local crypto library
-- Default value: `None`
-
-### `vault_hsm_slot`
-
-- The HSM slot number
-- Default value: `None`
-
-### `vault_hsm_pin`
-
-- The HSM pin Vault will use to connect
-- Default value: `None`
-
-### `vault_hsm_generate_key`
-
-- Whether or not Vault to generate its own encryption key in the HSM
-- Default value: `None`
-
-### `vault_hsm_key_label`
-
-- The encryption key label for Vault in the HSM
-- Default value: `None`
-
-### `vault_hsm_hmac_key_label`
-
-- The encryption key HMAC label for Vault in the HSM
-- Default value: `None`
 
 ### `vault_tls_disable`
 

@@ -4,7 +4,7 @@ listener "tcp" {
   address                  = "{{ vault_client_addr }}:{{ vault_http_port }}"
   tls_cert_file            = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
   tls_key_file             = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
-  tls_disable_client_certs = "{{ vault_tls_disable_client_certs }}"
+  tls_disable_client_certs = {{ vault_tls_disable_client_certs | lower }}
 {% else %}
 {% set proto="http" %}
   address     = "{{ vault_client_addr }}:{{ vault_http_port }}"
@@ -18,16 +18,7 @@ disable_mlock = true
 storage "raft" {
   path    = "{{ vault_data_directory }}/data"
   node_id = "{{ ansible_fqdn }}"
-{% if cloud == "gcp" %}
-  retry_join {
-    auto_join             = "provider=gce region={{ gcp_region }} tag_value={{ gcp_tag }}"
-    auto_join_scheme      = "https"
-{% if vault_tls_ca_cert_file is defined %}
-    leader_ca_cert_file   = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
-{% endif %}
-    leader_tls_servername = "{{ ansible_fqdn }}"
-  }
-{% else %}
+{% if cloud.provider == "none" %}
 {% for vault_server in groups[vault_ansible_group] %}
   retry_join {
     leader_api_addr         = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
@@ -40,6 +31,21 @@ storage "raft" {
 {% endif %}
   }
 {% endfor %}
+{% else %}
+  retry_join {
+{% if cloud.provider == "gce" %}
+    auto_join             = "provider=gce tag_value={{ cloud.gce_tag }}"
+{% elif cloud.provider == "azure" %}
+    auto_join             = "provider=azure subscription_id={{ cloud.azure_subscription_id }} resource_group={{ cloud.azure_resource_group }} vm_scale_set={{ cloud.azure_vm_scale_set }}"
+{% elif cloud.provider == "aws" %}
+    auto_join             = "provider=aws tag_key={{ cloud.aws_tag_key }} tag_vale={{ cloud.aws_tag_value }}"
+{% endif %}
+    auto_join_scheme      = "https"
+{% if vault_tls_ca_cert_file is defined %}
+    leader_ca_cert_file   = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
+{% endif %}
+    leader_tls_servername = "{{ ansible_fqdn }}"
+  }
 {% endif %}
 }
 {% elif vault_storage_backend == "consul" %}
@@ -67,33 +73,11 @@ storage "file" {
 }
 {% endif %}
 
-{% if vault_seal_type == "gcpkms" %}
-seal "gcpckms" {
-  project     = "{{ vault_seal_gcp_project }}"
-  region      = "{{ vault_seal_gcp_region }}"
-  key_ring    = "{{ vault_seal_gcp_key_ring }}"
-  crypto_key  = "{{ vault_seal_gcp_crypto_key }}"
+seal "{{ vault_seal.type }}" {
+{% for item in vault_seal if not item == "type" %}
+  {{ item }} = {{ vault_seal[item] }}
+{% endfor %}
 }
-{% elif vault_seal_type == "awskms" %}
-seal "awskms" {
-  region     = "{{ vault_seal_aws_region }}"
-  access_key = "{{ vault_seal_aws_access_key }}"
-  secret_key = "{{ vault_seal_aws_secret_key }}"
-  kms_key_id = "{{ vault_seal_aws_kms_key_id }}"
-{% if vault_seal_aws_endpoint is defined %}
-  endpoint   = "{{ vault_seal_aws_endpoint }}"
-{% endif %}
-}
-{% elif vault_seal_type == "pkcs11" %}
-seal "pkcs11" { 
-  lib            = "{{ vault_hsm_crypto_library }}"
-  slot           = "{{ vault_hsm_slot }}"
-  pin            = "{{ vault_hsm_pin }}"
-  generate_key   = "{{ vault_hsm_generate_key }}"
-  key_label      = "{{ vault_hsm_key_label }}"
-  hmac_key_label = "{{ vault_hsm_hmac_key_label }}"
-}
-{% endif %}
 
 {% if vault_telemetry is defined %}
 telemetry {
@@ -113,4 +97,4 @@ license_path = "{{ vault_license_directory }}/{{ vault_license_file | basename }
 
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
 cluster_addr  = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
-ui            = "{{ vault_ui_enable }}"
+ui            = {{ vault_ui_enable | lower }}

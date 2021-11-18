@@ -55,7 +55,7 @@
     - '{{ vault_license_directory }}'
     - '{{ vault_data_directory }}/data'
 
-- name: Creating Vault bin directory
+- name: Creating Vault bin directory if outside of '/usr/bin'
   ansible.builtin.file:
     state: directory
     path: '{{ vault_install_directory }}'
@@ -96,63 +96,58 @@
     - Restart Vault
   when: vault_local_binary_location is defined
 
-- name: Copying TLS certificates
-  ansible.builtin.copy:
-    src: '{{ item }}'
-    dest: '{{ vault_tls_directory }}/{{ item | basename }}'
-    owner: '{{ vault_user }}'
-    group: '{{ vault_group }}'
-    mode: '0400'
-  with_items:
-    - '{{ vault_tls_ca_cert_file | default([]) }}'
-    - '{{ vault_tls_cert_file }}'
-    - '{{ vault_tls_key_file }}'
-  when:
-    - vault_tls_cert_file is defined
-    - vault_tls_key_file is defined
-    - not packer_build
-  notify:
-    - Restart Vault
+- name: Not a Packer Build
+  block:
+    - name: Copying TLS certificates
+      ansible.builtin.copy:
+        src: '{{ item }}'
+        dest: '{{ vault_tls_directory }}/{{ item | basename }}'
+        owner: '{{ vault_user }}'
+        group: '{{ vault_group }}'
+        mode: '0400'
+      with_items:
+        - '{{ vault_tls_ca_cert_file | default([]) }}'
+        - '{{ vault_tls_cert_file }}'
+        - '{{ vault_tls_key_file }}'
+      when:
+        - vault_tls_cert_file is defined
+        - vault_tls_key_file is defined
+      notify:
+        - Restart Vault
 
-- name: Copying Vault license file
-  ansible.builtin.copy:
-    src: '{{ vault_license_file }}'
-    dest: '{{ vault_license_directory }}/{{ vault_license_file | basename }}'
-    owner: '{{ vault_user }}'
-    group: '{{ vault_group }}'
-    mode: '0400'
-  when:
-    - vault_license_file is defined
-    - not packer_build
+    - name: Copying Vault license file
+      ansible.builtin.copy:
+        src: '{{ vault_license_file }}'
+        dest: '{{ vault_license_directory }}/{{ vault_license_file | basename }}'
+        owner: '{{ vault_user }}'
+        group: '{{ vault_group }}'
+        mode: '0400'
+      when:
+        - vault_license_file is defined
 
-- name: Templating out Vault configuration
-  ansible.builtin.template:
-    src: vault.hcl.j2
-    dest: '{{ vault_config_file }}'
-    owner: '{{ vault_user }}'
-    group: '{{ vault_group }}'
-    mode: '0660'
-  when:
-    - not packer_build
-  notify:
-    - Restart Vault
+    - name: Templating out Vault configuration
+      ansible.builtin.template:
+        src: vault.hcl.j2
+        dest: '{{ vault_config_file }}'
+        owner: '{{ vault_user }}'
+        group: '{{ vault_group }}'
+        mode: '0660'
+      notify:
+        - Restart Vault
 
-- name: Templating out systemd script
-  ansible.builtin.template:
-    src: vault.systemd.j2
-    dest: /lib/systemd/system/vault.service
-    owner: root
-    group: root
-    mode: '0644'
-  when:
-    - not packer_build
-  notify:
-    - Reload Vault daemon
+    - name: Templating out systemd script
+      ansible.builtin.template:
+        src: vault.systemd.j2
+        dest: /lib/systemd/system/vault.service
+        owner: root
+        group: root
+        mode: '0644'
+      notify:
+        - Reload Vault daemon
 
-- name: Starting and enabling Vault
-  ansible.builtin.systemd:
-    name: vault
-    enabled: true
-    state: started
-  when:
-    - not packer_build
+    - name: Starting and enabling Vault
+      ansible.builtin.systemd:
+        name: vault
+        enabled: true
+        state: started
+  when: not packer_build

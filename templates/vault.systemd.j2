@@ -4,6 +4,8 @@ Documentation=https://www.vaultproject.io/docs/
 Requires=network-online.target
 After=network-online.target
 ConditionFileNotEmpty={{ vault_config_file }}
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Service]
 User={{ vault_user }}
@@ -25,12 +27,6 @@ RestartSec=5
 TimeoutStopSec=30
 LimitNOFILE=65536
 LimitMEMLOCK=infinity
-{% if vault_newsystemdversion == True %}
-# StartLimitIntervalSec and StartLimitBurst are available in systemd v230 and later (check your version with systemctl --version)
-# e.g., these two options cannot be used with RHEL7 (systemd 219) and starting the Vault service would error out
-StartLimitIntervalSec=60
-StartLimitBurst=3
-{% endif %}
 
 [Install]
 WantedBy=multi-user.target
