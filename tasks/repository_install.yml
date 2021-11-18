@@ -1,0 +1,40 @@
+---
+- name: Installing Vault dependencies for yum or dnf
+  ansible.builtin.yum:
+    name:
+      - yum-utils
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'yum' || ansible_pkg_mgr == 'dnf'
+
+- name: Installing HashiCorp repository for yum or dnf
+  yum_repository:
+    name: HashiCorp repository
+    description: HashiCorp repository
+    baseurl: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+  when: ansible_pkg_mgr == 'yum' || ansible_pkg_mgr == 'dnf'
+
+- name: Add key for apt
+  ansible.builtin.apt_key:
+    keyserver: https://apt.releases.hashicorp.com/gpg
+
+- name: Installing HashiCorp repository for apt
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    state: present
+
+- name: Installing Vault package via yum
+  ansible.builtin.yum:
+    name:
+      - vault
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'yum' || ansible_pkg_mgr == 'dnf'
+
+- name: Installing Vault package via apt
+  ansible.builtin.apt:
+    name:
+      - vault
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'apt'

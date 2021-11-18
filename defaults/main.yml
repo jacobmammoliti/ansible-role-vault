@@ -1,5 +1,6 @@
 ---
 packer_build: false
+use_hashicorp_repository: false
 
 vault_ansible_group: 'vault'
 
