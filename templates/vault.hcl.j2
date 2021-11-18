@@ -18,16 +18,7 @@ disable_mlock = true
 storage "raft" {
   path    = "{{ vault_data_directory }}/data"
   node_id = "{{ ansible_fqdn }}"
-{% if cloud == "gcp" %}
-  retry_join {
-    auto_join             = "provider=gce region={{ gcp_region }} tag_value={{ gcp_tag }}"
-    auto_join_scheme      = "https"
-{% if vault_tls_ca_cert_file is defined %}
-    leader_ca_cert_file   = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
-{% endif %}
-    leader_tls_servername = "{{ ansible_fqdn }}"
-  }
-{% else %}
+{% if cloud == "none" %}
 {% for vault_server in groups[vault_ansible_group] %}
   retry_join {
     leader_api_addr         = "{{ proto }}://{{ vault_server }}:{{ vault_http_port }}"
@@ -40,7 +31,21 @@ storage "raft" {
 {% endif %}
   }
 {% endfor %}
+{% else %}
+ retry_join {
+{% if cloud == "gce" %}
+    auto_join             = "provider=gce tag_value={{ gce_tag }}"
+{% elif cloud == "azure" %}
+    auto_join             = "provider=azure subscription_id={{ azure_subscription_id }} resource_group={{ azure_resource_group }} vm_scale_set={{ azure_vm_scale_set }}"
+{% elif cloud == "aws" %}
+    auto_join             = "provider=aws tag_key={{ aws_tag_key }} tag_vale={{ aws_tag_value }}"
 {% endif %}
+    auto_join_scheme      = "https"
+{% if vault_tls_ca_cert_file is defined %}
+    leader_ca_cert_file   = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
+{% endif %}
+    leader_tls_servername = "{{ ansible_fqdn }}"
+  }
 }
 {% elif vault_storage_backend == "consul" %}
 disable_mlock = false
@@ -67,33 +72,11 @@ storage "file" {
 }
 {% endif %}
 
-{% if vault_seal_type == "gcpkms" %}
-seal "gcpckms" {
-  project     = "{{ vault_seal_gcp_project }}"
-  region      = "{{ vault_seal_gcp_region }}"
-  key_ring    = "{{ vault_seal_gcp_key_ring }}"
-  crypto_key  = "{{ vault_seal_gcp_crypto_key }}"
+seal "{{ vault_seal.type }}" {
+{% for item in vault_seal if not item == "type" %}
+  {{ item }} = {{ vault_seal[item] }}
+{% endfor %}
 }
-{% elif vault_seal_type == "awskms" %}
-seal "awskms" {
-  region     = "{{ vault_seal_aws_region }}"
-  access_key = "{{ vault_seal_aws_access_key }}"
-  secret_key = "{{ vault_seal_aws_secret_key }}"
-  kms_key_id = "{{ vault_seal_aws_kms_key_id }}"
-{% if vault_seal_aws_endpoint is defined %}
-  endpoint   = "{{ vault_seal_aws_endpoint }}"
-{% endif %}
-}
-{% elif vault_seal_type == "pkcs11" %}
-seal "pkcs11" { 
-  lib            = "{{ vault_hsm_crypto_library }}"
-  slot           = "{{ vault_hsm_slot }}"
-  pin            = "{{ vault_hsm_pin }}"
-  generate_key   = "{{ vault_hsm_generate_key }}"
-  key_label      = "{{ vault_hsm_key_label }}"
-  hmac_key_label = "{{ vault_hsm_hmac_key_label }}"
-}
-{% endif %}
 
 {% if vault_telemetry is defined %}
 telemetry {
