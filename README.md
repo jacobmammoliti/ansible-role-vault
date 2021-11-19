@@ -70,7 +70,7 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_download`
 
 - Full URL location to download vault
-- Default value: `https://releases.hashicorp.com/vault/1.9.2/vault_1.9.2_linux_amd64.zip`
+- Default value: `https://releases.hashicorp.com/vault/1.9.0/vault_1.9.0_linux_amd64.zip`
 
 ### `vault_local_binary_location`
 
@@ -80,7 +80,7 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_vault_license_path`
 
 - Location of the Vault license file
-- Default value: `/opt/vault/vault.hclic`
+- Default value: `/opt/vault/license/vault.hclic`
 
 ### `vault_client_addr`
 
@@ -105,17 +105,18 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_storage_backend`
 
 - Storage backend to use
-- Default value: `file`
+- Default value: `integrated`
 
 ### `vault_telemetry`
 
 - Dictionary containing telemetry key-value data
 - Default value: `None`
 
-### `vault_seal_type`
+### `vault_seal`
 
 - Seal type to use
-- Default value: `shamir`
+- Type: `dictionary`
+- Default value: `type: 'shamir'`
 
 ### `vault_tls_disable`
 
@@ -125,7 +126,7 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_tls_directory`
 
 - Directory that TLS certificates live in
-- Default value: `/etc/vault.d/tls`
+- Default value: `/opt/vault/tls`
 
 ### `vault_tls_ca_cert_file`
 
@@ -135,12 +136,12 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `vault_tls_cert_file`
 
 - Local path to the TLS signed certificate to copy over
-- Default value: `tls/dc1-server-consul-0.pem`
+- Default value: `None`
 
 ### `vault_tls_key_file`
 
 - Local path to the TLS key to copy over
-- Default value: `tls/dc1-server-consul-0-key.pem`
+- Default value: `None`
 
 ### `vault_tls_disable_client_certs`
 
@@ -150,18 +151,8 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `cloud`
 
 - The cloud provider Vault will be deployed to
-- Use `gcp` for Google Cloud Platform; leave blank for on-prem
-- Default value: `None`
-
-### `gcp_region`
-
-- The GCP region for auto-join (only needed if using GCP)
-- Default value: `None`
-
-### `gcp_tag`
-
-- The Compute Instance tag for auto-join (only needed if using GCP)
-- Default value: `None`
+- Type: `dictionary`
+- Default value: `provider: 'none'`
 
 ### `consul_http_port`
 
@@ -171,7 +162,7 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `consul_scheme`
 
 - Scheme to use to connect to Consul
-- Default value: http
+- Default value: `http`
 
 ### `consul_vault_kv_path`
 
@@ -186,22 +177,22 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 ### `consul_tls_directory`
 
 - Directory that Consul TLS certificates live in
-- Default value: `/etc/consul.d/tls`
+- Default value: `None`
 
 ### `consul_tls_ca_file`
 
 - Local path to the TLS CA certificate to copy over
-- Default value: `tls/consul-agent-ca.pem`
+- Default value: `None`
 
 ### `consul_tls_cert_file`
 
 - Local path to the TLS signed certificate to copy over
-- Default value: `tls/dc1-server-consul-0.pem`
+- Default value: `None`
 
 ### `consul_tls_key_file`
 
 - Local path to the TLS key to copy over
-- Default value: `tls/dc1-server-consul-0-key.pem`
+- Default value: `None`
 
 ### `consul_tls_skip_verify`
 
@@ -222,6 +213,8 @@ The following example deploys a three node Vault cluster with Integrated storage
 > Using Google Cloud Platform for this example.
 
 ```bash
+$ export GOOGLE_CLOUD_PROJECT=<your_gcp_project_id>
+
 # creation a bastion node to run playbook from
 $ gcloud compute instances create bastion \
   --async \
@@ -253,9 +246,9 @@ $ consul tls ca create
 ==> Saved consul-agent-ca-key.pem
 
 $ consul tls cert create -server \
-  -additional-dnsname=vault01.c.[PROJECT_ID].internal \
-  -additional-dnsname=vault02.c.[PROJECT_ID].internal \
-  -additional-dnsname=vault03.c.[PROJECT_ID].internal
+  -additional-dnsname=vault01.c.$GOOGLE_CLOUD_PROJECT.internal \
+  -additional-dnsname=vault02.c.$GOOGLE_CLOUD_PROJECT.internal \
+  -additional-dnsname=vault03.c.$GOOGLE_CLOUD_PROJECT.internal
 ...
 ==> Using consul-agent-ca.pem and consul-agent-ca-key.pem
 ==> Saved dc1-server-consul-0.pem
@@ -263,16 +256,16 @@ $ consul tls cert create -server \
 
 # create the inventory file
 $ cat <<EOF > inventory
-[vault]
-vault01.c.[PROJECT_ID].internal
-vault02.c.[PROJECT_ID].internal
-vault03.c.[PROJECT_ID].internal
+[vault_primary]
+vault01.c.$GOOGLE_CLOUD_PROJECT.internal
+vault02.c.$GOOGLE_CLOUD_PROJECT.internal
+vault03.c.$GOOGLE_CLOUD_PROJECT.internal
 EOF
 
 # create the playbook
 $ cat <<EOF > site.yml
 ---
-- hosts: vault
+- hosts: vault_primary
   become: yes
   roles:
     - role: ansible-role-vault
@@ -281,40 +274,25 @@ EOF
 # optional: create group_vars directory and file
 $ mkdir group_vars
 
-$ cat <<EOF > vault.yml
+$ cat <<EOF > vault_primary.yml
 ---
 vault_storage_backend: 'integrated'
+vault_version: '1.9.0+ent'
 
-vault_tls_disable: false
 vault_tls_ca_cert_file: 'tls/consul-agent-ca.pem'
 vault_tls_cert_file: 'tls/dc1-server-consul-0.pem'
 vault_tls_key_file: 'tls/dc1-server-consul-0-key.pem'
 vault_tls_disable_client_certs: false
-EOF
 
-# verify connectivity to each compute instance
-$ ansible -i inventory vault -m ping 
-vault01.c.[PROJECT_ID].internal | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    "changed": false,
-    "ping": "pong"
-}
-vault02.c.[PROJECT_ID].internal | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    "changed": false,
-    "ping": "pong"
-}
-vault03.c.[PROJECT_ID].internal | SUCCESS => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    "changed": false,
-    "ping": "pong"
-}
+vault_ansible_group: vault_primary
+
+vault_seal:
+  type: gcpkms
+  project: $GOOGLE_CLOUD_PROJECT
+  region: us-central1
+  key_ring: vault_key_ring
+  crypto_key: vault_crypto_key
+EOF
 
 # run ansible playbook
 $ ansible-playbook -i inventory site.yaml
