@@ -154,6 +154,10 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Type: `dictionary`
 - Default value: `provider: 'none'`
 
+### `enterprise`
+- Whether to install enterprise Vault or not (only supported when using the repository method)
+- Default value: `false`
+
 ### `consul_http_port`
 
 - Port to use to connect to local Consul agent

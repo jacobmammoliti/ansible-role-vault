@@ -1,0 +1,47 @@
+---
+- name: Creating Vault group
+  ansible.builtin.group:
+    name: '{{ vault_group }}'
+    system: true
+  when: vault_create_account
+
+- name: Creating Vault user
+  ansible.builtin.user:
+    name: '{{ vault_user }}'
+    home: '{{ vault_home_directory }}'
+    group: '{{ vault_group }}'
+    shell: /sbin/nologin
+    system: true
+  when: vault_create_account
+
+- name: Creating Vault directories
+  ansible.builtin.file:
+    state: directory
+    path: '{{ item }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  with_items:
+    - '{{ vault_home_directory }}'
+    - '{{ vault_data_directory }}'
+    - '{{ vault_tls_directory }}'
+    - '{{ vault_license_directory }}'
+    - '{{ vault_data_directory }}/data'
+
+- name: Creating Vault bin directory if outside of '/usr/bin'
+  ansible.builtin.file:
+    state: directory
+    path: '{{ vault_install_directory }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  when: vault_install_directory != "/usr/bin"
+
+- name: Creating Vault plugin directory
+  ansible.builtin.file:
+    state: directory
+    path: '{{ vault_plugin_directory }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0750'
+  when: vault_enable_plugins

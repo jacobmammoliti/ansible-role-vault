@@ -5,23 +5,33 @@
       - yum-utils
     state: present
     update_cache: true
-  when: ansible_pkg_mgr == 'yum' || ansible_pkg_mgr == 'dnf'
+  when: ansible_pkg_mgr == 'yum' or ansible_pkg_mgr == 'dnf'
+
+- name: Installing Vault dependencies for apt
+  ansible.builtin.apt:
+    name:
+      - gpg-agent
+      - curl
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'apt'
 
 - name: Installing HashiCorp repository for yum or dnf
-  yum_repository:
-    name: HashiCorp repository
-    description: HashiCorp repository
-    baseurl: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-  when: ansible_pkg_mgr == 'yum' || ansible_pkg_mgr == 'dnf'
+  get_url:
+    url: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+    dest: /etc/yum.repos.d/hashicorp.repo
+  when: ansible_pkg_mgr == 'yum' or ansible_pkg_mgr == 'dnf'
 
 - name: Add key for apt
   ansible.builtin.apt_key:
-    keyserver: https://apt.releases.hashicorp.com/gpg
+    url: https://apt.releases.hashicorp.com/gpg
+  when: ansible_pkg_mgr == 'apt'
 
 - name: Installing HashiCorp repository for apt
   ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
     state: present
+  when: ansible_pkg_mgr == 'apt'
 
 - name: Installing Vault package via yum
   ansible.builtin.yum:
@@ -29,7 +39,19 @@
       - vault
     state: present
     update_cache: true
-  when: ansible_pkg_mgr == 'yum' || ansible_pkg_mgr == 'dnf'
+  when:
+    - ansible_pkg_mgr == 'yum' or ansible_pkg_mgr == 'dnf'
+    - not enterprise
+
+- name: Installing Vault enterprise package via yum
+  ansible.builtin.yum:
+    name:
+      - vault-enterprise
+    state: present
+    update_cache: true
+  when:
+    - ansible_pkg_mgr == 'yum' or ansible_pkg_mgr == 'dnf'
+    - enterprise
 
 - name: Installing Vault package via apt
   ansible.builtin.apt:
@@ -37,4 +59,16 @@
       - vault
     state: present
     update_cache: true
-  when: ansible_pkg_mgr == 'apt'
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - not enterprise
+
+- name: Installing Vault enterprise package via apt
+  ansible.builtin.apt:
+    name:
+      - vault-enterprise
+    state: present
+    update_cache: true
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - enterprise
