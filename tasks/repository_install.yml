@@ -36,7 +36,7 @@
 - name: Installing Vault package via yum
   ansible.builtin.yum:
     name:
-      - vault
+      - "vault-{{ vault_version }}"
     state: present
     update_cache: true
   when:
@@ -46,7 +46,7 @@
 - name: Installing Vault enterprise package via yum
   ansible.builtin.yum:
     name:
-      - vault-enterprise
+      - "vault-enterprise-{{ vault_version }}"
     state: present
     update_cache: true
   when:
@@ -56,7 +56,7 @@
 - name: Installing Vault package via apt
   ansible.builtin.apt:
     name:
-      - vault
+      - "vault={{ vault_version }}"
     state: present
     update_cache: true
   when:
@@ -66,7 +66,7 @@
 - name: Installing Vault enterprise package via apt
   ansible.builtin.apt:
     name:
-      - vault-enterprise
+      - "vault-enterprise={{ vault_version }}"
     state: present
     update_cache: true
   when:
