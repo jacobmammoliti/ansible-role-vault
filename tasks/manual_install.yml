@@ -1,0 +1,50 @@
+---
+- name: Installing Vault dependencies via yum
+  ansible.builtin.yum:
+    name:
+      - unzip
+      - curl
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'yum'
+
+- name: Installing Vault dependencies via apt
+  ansible.builtin.apt:
+    name:
+      - unzip
+      - curl
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Installing Vault dependencies via dnf
+  ansible.builtin.dnf:
+    name:
+      - unzip
+      - curl
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'dnf'
+
+- name: Installing Vault binary from remote source
+  ansible.builtin.unarchive:
+    src: '{{ vault_download }}'
+    dest: '{{ vault_install_directory }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    remote_src: true
+    mode: '0755'
+  notify:
+    - Restart Vault
+  when: vault_local_binary_location is not defined
+
+- name: Installing Vault binary from local source
+  ansible.builtin.copy:
+    src: '{{ vault_local_binary_location }}'
+    dest: '{{ vault_install_directory }}/{{ vault_local_binary_location | basename }}'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0755'
+  notify:
+    - Restart Vault
+  when: vault_local_binary_location is defined

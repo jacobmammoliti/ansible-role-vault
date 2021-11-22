@@ -1,0 +1,74 @@
+---
+- name: Installing Vault dependencies for yum or dnf
+  ansible.builtin.yum:
+    name:
+      - yum-utils
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'yum' or ansible_pkg_mgr == 'dnf'
+
+- name: Installing Vault dependencies for apt
+  ansible.builtin.apt:
+    name:
+      - gpg-agent
+      - curl
+    state: present
+    update_cache: true
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Installing HashiCorp repository for yum or dnf
+  get_url:
+    url: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+    dest: /etc/yum.repos.d/hashicorp.repo
+  when: ansible_pkg_mgr == 'yum' or ansible_pkg_mgr == 'dnf'
+
+- name: Add key for apt
+  ansible.builtin.apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Installing HashiCorp repository for apt
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    state: present
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Installing Vault package via yum
+  ansible.builtin.yum:
+    name:
+      - "vault-{{ vault_version }}"
+    state: present
+    update_cache: true
+  when:
+    - ansible_pkg_mgr == 'yum' or ansible_pkg_mgr == 'dnf'
+    - not enterprise
+
+- name: Installing Vault enterprise package via yum
+  ansible.builtin.yum:
+    name:
+      - "vault-enterprise-{{ vault_version }}+ent"
+    state: present
+    update_cache: true
+  when:
+    - ansible_pkg_mgr == 'yum' or ansible_pkg_mgr == 'dnf'
+    - enterprise
+
+- name: Installing Vault package via apt
+  ansible.builtin.apt:
+    name:
+      - "vault={{ vault_version }}"
+    state: present
+    update_cache: true
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - not enterprise
+
+- name: Installing Vault enterprise package via apt
+  ansible.builtin.apt:
+    name:
+      - "vault-enterprise={{ vault_version }}+ent"
+    state: present
+    update_cache: true
+  when:
+    - ansible_pkg_mgr == 'apt'
+    - enterprise

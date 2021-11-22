@@ -1,5 +1,9 @@
 ---
 packer_build: false
+use_hashicorp_repository: false
+
+# only supported when using the HashiCorp repository
+enterprise: false
 
 vault_ansible_group: 'vault'
 

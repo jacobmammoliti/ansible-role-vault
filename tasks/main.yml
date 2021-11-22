@@ -1,3 +1,15 @@
 ---
-- name: installing vault
-  include: install.yml
+- name: Installing Vault via the HashiCorp repository
+  include: repository_install.yml
+  when: use_hashicorp_repository
+
+- name: Laying out OS level configurations
+  include: os_level_configuration.yml
+
+- name: Installing Vault via direct archive
+  include: manual_install.yml
+  when: not use_hashicorp_repository
+
+- name: Laying out remaining items if not a packer image
+  include: non_packer_install.yml
+  when: not packer_build
