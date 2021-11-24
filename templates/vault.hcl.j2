@@ -22,12 +22,14 @@ storage "raft" {
 {% for vault_server in groups[vault_ansible_group] %}
   retry_join {
     leader_api_addr         = "{{ proto }}://{{ hostvars[vault_server]['ansible_fqdn'] }}:{{ vault_http_port }}"
-{% if proto == "https" and not vault_tls_disable_client_certs %}
+{% if proto == "https" %}
 {% if vault_tls_ca_cert_file is defined %}
     leader_ca_cert_file     = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
 {% endif %}
+{% if not vault_tls_disable_client_certs %}
     leader_client_cert_file = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
     leader_client_key_file  = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
+{% endif %}
 {% endif %}
   }
 {% endfor %}
