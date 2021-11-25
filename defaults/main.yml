@@ -34,8 +34,8 @@ vault_archive: 'vault_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }
 vault_download: 'https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_archive }}'
 
 vault_client_addr: '0.0.0.0'
-vault_http_port: '8200'
-vault_api_port: '8201'
+vault_api_port: '8200'
+vault_cluster_port: '8201'
 vault_ui_enable: true
 
 # options: none, gce, azure, aws

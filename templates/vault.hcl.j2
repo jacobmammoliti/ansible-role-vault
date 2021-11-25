@@ -1,13 +1,13 @@
 listener "tcp" {
 {% if vault_tls_cert_file is defined and vault_tls_key_file is defined %}
 {% set proto="https" %}
-  address                  = "{{ vault_client_addr }}:{{ vault_http_port }}"
+  address                  = "{{ vault_client_addr }}:{{ vault_api_port }}"
   tls_cert_file            = "{{ vault_tls_directory }}/{{ vault_tls_cert_file | basename }}"
   tls_key_file             = "{{ vault_tls_directory }}/{{ vault_tls_key_file  | basename }}"
   tls_disable_client_certs = {{ vault_tls_disable_client_certs | lower }}
 {% else %}
 {% set proto="http" %}
-  address     = "{{ vault_client_addr }}:{{ vault_http_port }}"
+  address     = "{{ vault_client_addr }}:{{ vault_api_port }}"
   tls_disable = true
 {% endif %}
 }
@@ -21,7 +21,7 @@ storage "raft" {
 {% if cloud.provider == "none" %}
 {% for vault_server in groups[vault_ansible_group] %}
   retry_join {
-    leader_api_addr         = "{{ proto }}://{{ hostvars[vault_server]['ansible_fqdn'] }}:{{ vault_http_port }}"
+    leader_api_addr         = "{{ proto }}://{{ hostvars[vault_server]['ansible_fqdn'] }}:{{ vault_api_port }}"
 {% if proto == "https" %}
 {% if vault_tls_ca_cert_file is defined %}
     leader_ca_cert_file     = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
@@ -97,6 +97,6 @@ plugin_directory = "{{ vault_plugin_directory }}"
 license_path = "{{ vault_license_directory }}/{{ vault_license_file | basename }}"
 {% endif %}
 
-api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_http_port }}"
-cluster_addr  = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
+api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
+cluster_addr  = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_cluster_port }}"
 ui            = {{ vault_ui_enable | lower }}

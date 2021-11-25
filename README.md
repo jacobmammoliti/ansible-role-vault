@@ -87,12 +87,12 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - The address to which Vault will bind client interfaces
 - Default value: `0.0.0.0`
 
-### `vault_http_port`
+### `vault_api_port`
 
 - HTTP port for Vault
 - Default value: `8200`
 
-### `vault_api_port`
+### `vault_cluster_port`
 
 - HTTP API port for Vault
 - Default value: `8201`
