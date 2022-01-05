@@ -16,7 +16,7 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - If true, Ansible will not copy over certificates, template out configuration files, or start the Vault service. Useful if building a base image with Vault installed
 - Default value: `false`
 
-### `use_hashicorp-repository`
+### `use_hashicorp_repository`
 - If true, Ansible will install Vault via the official HashiCorp repository. If false, Vault can be installed via remote or local download
 - Default value: `false`
 
