@@ -27,7 +27,7 @@ vault_architecture_map:
   armv7l: arm
   aarch64: arm64
 
-vault_version: '1.9.0'
+vault_version: '1.9.1'
 vault_os: '{{ ansible_system|lower }}'
 vault_architecture: '{{ vault_architecture_map[ansible_architecture] }}'
 vault_archive: 'vault_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }}.zip'
@@ -50,7 +50,9 @@ vault_seal:
 
 vault_tls_disable_client_certs: true
 
+# if Consul is used as storage backend
 consul_http_port: '8500'
 consul_scheme: 'http'
+consul_tls_directory: '{{ vault_data_directory }}/consul'
 consul_tls_skip_verify: false
 consul_vault_kv_path: 'vault/'

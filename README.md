@@ -12,201 +12,171 @@ The following scenarios are currently run with Molecule via GitHub Actions on al
 ## Role Variables
 Ansible variables are listed below, along with default values (see `defaults/main.yml`):
 
-### `vault_user`
+### `packer_build`
+- If true, Ansible will not copy over certificates, template out configuration files, or start the Vault service. Useful if building a base image with Vault installed
+- Default value: `false`
 
-- OS user
+### `use_hashicorp-repository`
+- If true, Ansible will install Vault via the official HashiCorp repository. If false, Vault can be installed via remote or local download
+- Default value: `false`
+
+### `enterprise`
+- If true, Ansible will install the enterprise version of Vault. This is only supported when installing from the HashiCorp repository
+- Default value: `false`
+
+### `vault_ansible_group`
+- The name of the inventory group
+- Default value: `vault`
+
+### `vault_user`
+- OS user name
 - Default value: `vault`
 
 ### `vault_group`
-
-- OS group
+- OS group name
 - Default value: `vault`
 
 ### `vault_create_account`
-
-- Whether to create the user and group defined by `vault_user` and `vault_group` or not
+- If true, Ansible will create the user and group defined in `vault_user` and `vault_group`
 - Default value: `true`
 
 ### `vault_home_directory`
-
 - Location of Vault's home directory
 - Default value: `/etc/vault.d`
 
 ### `vault_data_directory`
-
 - Location of Vault's data directory
 - Default value: `/opt/vault`
 
 ### `vault_install_directory`
-
 - Location of the Vault binary
-- Default value: `/opt/vault/bin`
+- Default value: `/usr/bin`
+
+### `vault_tls_directory`
+- Location of the TLS certificates
+- Default value: `/opt/vault/tls`
+
+### `vault_license_directory`
+- Location of the Vault license
+- Default value: `/opt/vault/license`
 
 ### `vault_config_file`
-
 - Location of the Vault configuration file
 - Default value: `/etc/vault.d/vault.hcl`
 
-### `vault_plugin_directory`
+### `vault_enable_plugins`
+- If true, Ansible will create a plugins directory
+- Default value: `false`
 
-- Location of Vault's plugin directory
+### `vault_plugin_directory`
+- Location of the plugin directory
 - Default value: `/etc/vault.d/plugins`
 
-### `vault_enable_plugins`
-
-- Whether to create the plugins directory or not
-- Default value: `true`
-
 ### `vault_version`
-
-- Version of Vault to download and install
-- Default value: `1.9.0`
+- Version of Vault to install
+- Default value: `1.9.1`
 
 ### `vault_archive`
-
 - Name of the Vault file archive to download
-- Default value: `vault_1.9.0_linux_amd64.zip`
+- Default value: `vault_1.9.1_linux_amd64.zip`
 
 ### `vault_download`
-
-- Full URL location to download vault
-- Default value: `https://releases.hashicorp.com/vault/1.9.0/vault_1.9.0_linux_amd64.zip`
+- Full remote URL location to the vault archive
+- Default value: `https://releases.hashicorp.com/vault/1.9.1/vault_1.9.1_linux_amd64.zip`
 
 ### `vault_local_binary_location`
+- If set, Ansible will locally look for the Vault binary at the specified path 
+- No default value
 
-- Location of the local binary
-- Default value: `None`
-
-### `vault_vault_license_path`
-
-- Location of the Vault license file
-- Default value: `/opt/vault/license/vault.hclic`
+### `vault_license_file`
+- If set, Ansible will locally look for a Vault license at the specifed path
+- No default value. This is **required** for Vault versions >= 1.8.0 when installing enterprise
 
 ### `vault_client_addr`
-
 - The address to which Vault will bind client interfaces
 - Default value: `0.0.0.0`
 
 ### `vault_api_port`
-
-- HTTP port for Vault
+- Vault API port
 - Default value: `8200`
 
 ### `vault_cluster_port`
-
-- HTTP API port for Vault
+- Vault cluster port
 - Default value: `8201`
 
 ### `vault_ui_enable`
-
-- Whether the UI is enabled or not
-- Default value: `true`
-
-### `vault_storage_backend`
-
-- Storage backend to use
-- Default value: `integrated`
-
-### `vault_telemetry`
-
-- Dictionary containing telemetry key-value data
-- Default value: `None`
-
-### `vault_seal`
-
-- Seal type to use
-- Type: `dictionary`
-- Default value: `type: 'shamir'`
-
-### `vault_tls_disable`
-
-- Whether to disable TLS or not
-- Default value: `true`
-
-### `vault_tls_directory`
-
-- Directory that TLS certificates live in
-- Default value: `/opt/vault/tls`
-
-### `vault_tls_ca_cert_file`
-
-- Local path to the TLS CA certificate to copy over
-- Default value: `None`
-
-### `vault_tls_cert_file`
-
-- Local path to the TLS signed certificate to copy over
-- Default value: `None`
-
-### `vault_tls_key_file`
-
-- Local path to the TLS key to copy over
-- Default value: `None`
-
-### `vault_tls_disable_client_certs`
-
-- Whether to disable client certificates or not
+- If true, Ansible will enable the Vault UI
 - Default value: `true`
 
 ### `cloud`
-
-- The cloud provider Vault will be deployed to
+- The cloud provider Vault will be deployed to. This is used for Raft's auto-join feature. Refer to [this](https://www.consul.io/docs/install/cloud-auto-join#provider-specific-configurations) document to determine what keys are needed for each cloud environment. On-prem/VMWare installs would set this to `none`
 - Type: `dictionary`
 - Default value: `provider: 'none'`
 
-### `enterprise`
-- Whether to install enterprise Vault or not (only supported when using the repository method)
-- Default value: `false`
+### `vault_storage_backend`
+- Storage backend to use (supports file, integrated, or Consul)
+- Default value: `integrated`
+
+### `vault_telemetry`
+- Specifies telemetry configuration to Vault. Refer to [this](https://www.vaultproject.io/docs/configuration/telemetry#telemetry-parameters) document for available parameters. Each parameter can be passed as a key to this dictionary
+- No default value
+
+### `vault_seal`
+- A dictionary defining the seal type to use for Vault. Refer to [this](https://www.vaultproject.io/docs/configuration/seal) document for the required parameters to pass as keys if using a cloud KMS solution.
+- Type: `dictionary`
+- Default value: `type: 'shamir'`
+
+### `vault_tls_disable_client_certs`
+- If true, Vault will not request for a client certificate when accessed
+- Default value: true
+
+### `vault_tls_ca_cert_file`
+- If set, Ansible will locally look for a TLS CA certificate at the specified path to copy to each Vault server
+- No default value
+
+### `vault_tls_cert_file`
+- If set, Ansible will locally look for a signed TLS certificate at the specified path to copy to each Vault server
+- No default value
+
+### `vault_tls_key_file`
+- If set, Ansible will locally look for a TLS key at the specified path to copy to each Vault server
+- No default value
 
 ### `consul_http_port`
-
-- Port to use to connect to local Consul agent
+- Port to use to connect to the local Consul agent
 - Default value: `8500`
 
 ### `consul_scheme`
-
-- Scheme to use to connect to Consul
+- Scheme to use to connect to the local Consul agent
 - Default value: `http`
 
-### `consul_vault_kv_path`
-
-- Path to Vault's data in Consul KV
-- Default value: `vault/`
-
-### `consul_acl_enabled`
-
-- Whether Consul ACLs are enabled or not
-- Default value: `false`
+### `consul_vault_acl_token`
+- Consul ACL token that Vault should use
+- No default value
 
 ### `consul_tls_directory`
-
-- Directory that Consul TLS certificates live in
-- Default value: `None`
+- Location of the TLS certificates for Consul
+- Default value: `/opt/vault/consul`
 
 ### `consul_tls_ca_file`
-
-- Local path to the TLS CA certificate to copy over
-- Default value: `None`
+- If set, Ansible will locally look for a TLS CA certificate at the specified path to copy to each Vault server for connecting to Consul
+- No default value
 
 ### `consul_tls_cert_file`
-
-- Local path to the TLS signed certificate to copy over
-- Default value: `None`
+- If set, Ansible will locally look for a signed TLS certificate at the specified path to copy to each Vault server for connecting to Consul
+- No default value
 
 ### `consul_tls_key_file`
-
-- Local path to the TLS key to copy over
-- Default value: `None`
+- If set, Ansible will locally look for a TLS key at the specified path to copy to each Vault server for connecting to Consul
+- No default value
 
 ### `consul_tls_skip_verify`
-
-- Whether or not to skip verification of Consul TLS certificates
+- If true, Vault will skip verification of the certificae presented by Consul
 - Default value: `false`
 
-### `consul_vault_acl_token`
-
-- Vault's ACL token in Consul (requred if ACLS are enabled in Consul cluster)
-- Default value: `None`
+### `consul_vault_kv_path`
+- Path to Vault's data in Consul's key value storage
+- Default value: `vault/`
 
 ## Dependencies
 - Consul cluster if using Consul as backend storage.

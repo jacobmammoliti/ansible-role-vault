@@ -10,6 +10,6 @@
   systemd:
     name: vault
     state: restarted
-    daemon_reload: yes
+    daemon_reload: true
   when:
     - not packer_build
