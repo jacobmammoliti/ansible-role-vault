@@ -10,6 +10,11 @@ listener "tcp" {
   address     = "{{ vault_client_addr }}:{{ vault_api_port }}"
   tls_disable = true
 {% endif %}
+{% if vault_unauthenticated_metrics_access %}
+  telemetry {
+    unauthenticated_metrics_access = true
+  }
+{% endif %}
 }
 
 {% if vault_storage_backend == "integrated" %}
@@ -88,7 +93,7 @@ seal "{{ vault_seal.type }}" {
 {% if vault_telemetry is defined %}
 telemetry {
 {% for item in vault_telemetry %}
-  {{ item }} = {{ vault_telemetry[item] }}
+  {{ item }} = "{{ vault_telemetry[item] }}"
 {% endfor %}
 }
 {% endif %}
