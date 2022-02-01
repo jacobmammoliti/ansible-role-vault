@@ -46,7 +46,11 @@ storage "raft" {
 {% if vault_tls_ca_cert_file is defined %}
     leader_ca_cert_file   = "{{ vault_tls_directory }}/{{ vault_tls_ca_cert_file | basename }}"
 {% endif %}
+{% if vault_leader_tls_servername is defined %}
+    leader_tls_servername = "{{ vault_leader_tls_servername }}"
+{% else %}
     leader_tls_servername = "{{ ansible_fqdn }}"
+{% endif %}
   }
 {% endif %}
 }

@@ -142,6 +142,10 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - If set, Ansible will locally look for a TLS key at the specified path to copy to each Vault server
 - No default value
 
+### `vault_leader_tls_servername`
+- If Set, Vault will use this TLS servername when connecting with HTTPS. Uses the server's hostname if not set.
+- No default value
+
 ### `consul_http_port`
 - Port to use to connect to the local Consul agent
 - Default value: `8500`
