@@ -90,13 +90,17 @@ seal "{{ vault_seal.type }}" {
 {% endfor %}
 }
 
-{% if vault_telemetry is defined %}
-telemetry {
-{% for item in vault_telemetry %}
-  {{ item }} = "{{ vault_telemetry[item] }}"
-{% endfor %}
-}
-{% endif %}
+ {% if vault_telemetry is defined %}
+ telemetry {
+ {% for item in vault_telemetry %}
+ {% if (vault_telemetry[item] == True or vault_telemetry[item] == False) %}
+   {{ item }} = {{ vault_telemetry[item] | bool | lower }}
+ {% else %}
+   {{ item }} = "{{ vault_telemetry[item] }}"
+ {% endif %}
+ {% endfor %}
+ }
+ {% endif %}
 
 {% if vault_enable_plugins %}
 plugin_directory = "{{ vault_plugin_directory }}"
