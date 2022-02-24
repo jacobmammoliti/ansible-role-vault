@@ -50,6 +50,8 @@ vault_seal:
 
 vault_tls_disable_client_certs: true
 
+vault_unauthenticated_metrics_access: false
+
 # if Consul is used as storage backend
 consul_http_port: '8500'
 consul_scheme: 'http'

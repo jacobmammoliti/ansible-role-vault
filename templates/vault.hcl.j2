@@ -10,6 +10,11 @@ listener "tcp" {
   address     = "{{ vault_client_addr }}:{{ vault_api_port }}"
   tls_disable = true
 {% endif %}
+{% if vault_unauthenticated_metrics_access %}
+  telemetry {
+    unauthenticated_metrics_access = true
+  }
+{% endif %}
 }
 
 {% if vault_storage_backend == "integrated" %}
@@ -81,13 +86,17 @@ seal "{{ vault_seal.type }}" {
 {% endfor %}
 }
 
-{% if vault_telemetry is defined %}
-telemetry {
-{% for item in vault_telemetry %}
-  {{ item }} = {{ vault_telemetry[item] }}
-{% endfor %}
-}
-{% endif %}
+ {% if vault_telemetry is defined %}
+ telemetry {
+ {% for item in vault_telemetry %}
+ {% if (vault_telemetry[item] == True or vault_telemetry[item] == False) %}
+   {{ item }} = {{ vault_telemetry[item] | bool | lower }}
+ {% else %}
+   {{ item }} = "{{ vault_telemetry[item] }}"
+ {% endif %}
+ {% endfor %}
+ }
+ {% endif %}
 
 {% if vault_enable_plugins %}
 plugin_directory = "{{ vault_plugin_directory }}"
