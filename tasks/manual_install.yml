@@ -41,7 +41,7 @@
 - name: Installing Vault binary from local source
   ansible.builtin.copy:
     src: '{{ vault_local_binary_location }}'
-    dest: '{{ vault_install_directory }}/{{ vault_local_binary_location | basename }}'
+    dest: '{{ vault_install_directory }}/vault'
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0755'
