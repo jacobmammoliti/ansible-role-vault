@@ -51,3 +51,4 @@
     name: firewalld
     enabled: false
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+  ignore_errors: true
