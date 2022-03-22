@@ -100,6 +100,10 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Vault API port
 - Default value: `8200`
 
+### `vault_cluster_name`
+- The name of the Vault cluster
+- Default value: none
+
 ### `vault_cluster_port`
 - Vault cluster port
 - Default value: `8201`

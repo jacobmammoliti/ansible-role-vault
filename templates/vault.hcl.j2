@@ -1,3 +1,7 @@
+{% if vault_cluster_name is defined and vault_cluster_name != '' -%}
+cluster_name = "{{ vault_cluster_name }}"
+
+{% endif -%}
 listener "tcp" {
 {% if vault_tls_cert_file is defined and vault_tls_key_file is defined %}
 {% set proto="https" %}
