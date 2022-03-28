@@ -18,12 +18,22 @@
 - name: Copying Vault license file
   ansible.builtin.copy:
     src: '{{ vault_license_file }}'
-    dest: '{{ vault_license_directory }}/{{ vault_license_file | basename }}'
+    dest: '{{ vault_license_directory }}/vault.hclic'
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0400'
   when:
     - vault_license_file is defined
+
+- name: Creating Vault license file
+  ansible.builtin.copy:
+    dest: '{{ vault_license_directory }}/vault.hclic'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0400'
+    content: '{{ vault_license_string }}'
+  when:
+    - vault_license_string is defined
 
 - name: Templating out Vault configuration
   ansible.builtin.template:
