@@ -14,3 +14,7 @@
     msg: You can't use vault_tls_key_file and vault_tls_key_string at the same time
   when: vault_tls_key_file is defined and vault_tls_key_string is defined
 
+- name: Checking license input variables
+  fail:
+    msg: You can't use vault_license_file and vault_license_file at the same time
+  when: vault_license_file is defined and vault_license_string is defined
