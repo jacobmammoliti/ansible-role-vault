@@ -88,9 +88,13 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - If set, Ansible will locally look for the Vault binary at the specified path
 - No default value
 
+### `vault_license_string`
+- If set, Ansible will create a license file using this value for the file content
+- No default value. A license is **required** for Vault versions >= 1.8.0 when installing enterprise, so **you have to provide** either `vault_license_string` or `vault_license_file`
+
 ### `vault_license_file`
 - If set, Ansible will locally look for a Vault license at the specified path
-- No default value. This is **required** for Vault versions >= 1.8.0 when installing enterprise
+- No default value. A license is **required** for Vault versions >= 1.8.0 when installing enterprise, so **you have to provide** either `vault_license_string` or `vault_license_file`
 
 ### `vault_client_addr`
 - The address to which Vault will bind client interfaces
