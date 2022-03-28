@@ -106,8 +106,8 @@ seal "{{ vault_seal.type }}" {
 plugin_directory = "{{ vault_plugin_directory }}"
 {% endif %}
 
-{% if vault_license_file is defined %}
-license_path = "{{ vault_license_directory }}/{{ vault_license_file | basename }}"
+{% if vault_license_file is defined or vault_license_string is defined %}
+license_path = "{{ vault_license_directory }}/vault.hclic"
 {% endif %}
 
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
