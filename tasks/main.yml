@@ -1,4 +1,9 @@
 ---
+- name: Checking input variables
+  fail:
+    msg: You can't use vault_license_file and vault_license_file at the same time
+  when: vault_license_file is defined and vault_license_string is defined
+
 - name: Installing Vault via the HashiCorp repository
   include_tasks: repository_install.yml
   when: use_hashicorp_repository
