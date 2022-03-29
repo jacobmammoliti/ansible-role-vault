@@ -1,19 +1,60 @@
-- name: Copying TLS certificates
+- name: Copying TLS CA certificate
   ansible.builtin.copy:
-    src: '{{ item }}'
-    dest: '{{ vault_tls_directory }}/{{ item | basename }}'
+    src: '{{ vault_tls_ca_cert_file }}'
+    dest: '{{ vault_tls_directory }}/ca.crt'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0400'
+  when:
+    - vault_tls_ca_cert_file is defined
+  notify:
+    - Restart Vault
+
+- name: Copying TLS certificate and key
+  ansible.builtin.copy:
+    src: '{{ item.src }}'
+    dest: '{{ vault_tls_directory }}/{{ item.dest }}'
     owner: '{{ vault_user }}'
     group: '{{ vault_group }}'
     mode: '0400'
   with_items:
-    - '{{ vault_tls_ca_cert_file | default([]) }}'
-    - '{{ vault_tls_cert_file }}'
-    - '{{ vault_tls_key_file }}'
+    - { src: '{{ vault_tls_cert_file }}', dest: 'vault.crt' }
+    - { src: '{{ vault_tls_key_file }}', dest: 'vault.key' }
   when:
     - vault_tls_cert_file is defined
     - vault_tls_key_file is defined
   notify:
     - Restart Vault
+
+- name: Creating TLS CA cert file
+  ansible.builtin.copy:
+    dest: '{{ vault_tls_directory }}/ca.crt'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0644'
+    content: '{{ vault_tls_ca_cert_string }}'
+  when:
+    - vault_tls_ca_cert_string is defined
+
+- name: Creating TLS cert file
+  ansible.builtin.copy:
+    dest: '{{ vault_tls_directory }}/vault.crt'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0644'
+    content: '{{ vault_tls_cert_string }}'
+  when:
+    - vault_tls_cert_string is defined
+
+- name: Creating TLS key file
+  ansible.builtin.copy:
+    dest: '{{ vault_tls_directory }}/vault.key'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0644'
+    content: '{{ vault_tls_key_string }}'
+  when:
+    - vault_tls_key_string is defined
 
 - name: Copying Vault license file
   ansible.builtin.copy:
