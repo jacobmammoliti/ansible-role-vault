@@ -1,4 +1,7 @@
 ---
+- name: Checking input variables
+  include_tasks: check_input.yml
+
 - name: Installing Vault via the HashiCorp repository
   include_tasks: repository_install.yml
   when: use_hashicorp_repository
