@@ -74,15 +74,15 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 
 ### `vault_version`
 - Version of Vault to install
-- Default value: `1.9.1`
+- Default value: `1.10.0`
 
 ### `vault_archive`
 - Name of the Vault file archive to download
-- Default value: `vault_1.9.1_linux_amd64.zip`
+- Default value: `vault_1.10.0_linux_amd64.zip`
 
 ### `vault_download`
 - Full remote URL location to the vault archive
-- Default value: `https://releases.hashicorp.com/vault/1.9.1/vault_1.9.1_linux_amd64.zip`
+- Default value: `https://releases.hashicorp.com/vault/1.10.0/vault_1.10.0_linux_amd64.zip`
 
 ### `vault_local_binary_location`
 - If set, Ansible will locally look for the Vault binary at the specified path
@@ -275,7 +275,7 @@ $ mkdir group_vars
 $ cat <<EOF > vault_primary.yml
 ---
 vault_storage_backend: 'integrated'
-vault_version: '1.9.0+ent'
+vault_version: '1.10.0+ent'
 
 vault_tls_ca_cert_file: 'tls/consul-agent-ca.pem'
 vault_tls_cert_file: 'tls/dc1-server-consul-0.pem'
