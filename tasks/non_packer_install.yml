@@ -95,6 +95,8 @@
     mode: '0644'
   notify:
     - Reload Vault daemon
+  when:
+    - not use_hashicorp_repository
 
 - name: Starting and enabling Vault
   ansible.builtin.systemd:
