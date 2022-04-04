@@ -86,6 +86,16 @@
   notify:
     - Restart Vault
 
+- name: Creating service environment file
+  ansible.builtin.file:
+    path: '{{ vault_home_directory }}/vault.env'
+    owner: '{{ vault_user }}'
+    group: '{{ vault_group }}'
+    mode: '0640'
+    state: touch
+  notify:
+    - Reload Vault daemon
+
 - name: Templating out systemd script
   ansible.builtin.template:
     src: vault.systemd.j2

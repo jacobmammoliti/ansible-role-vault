@@ -8,6 +8,7 @@ StartLimitIntervalSec=60
 StartLimitBurst=3
 
 [Service]
+EnvironmentFile={{ vault_home_directory }}/vault.env
 User={{ vault_user }}
 Group={{ vault_group }}
 ProtectSystem=full
