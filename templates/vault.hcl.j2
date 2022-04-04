@@ -39,6 +39,7 @@ storage "raft" {
     leader_client_cert_file = "{{ vault_tls_directory }}/vault.crt"
     leader_client_key_file  = "{{ vault_tls_directory }}/vault.key"
 {% endif %}
+    leader_tls_servername   = "{{ vault_leader_tls_servername | default(ansible_fqdn) }}"
 {% endif %}
   }
 {% endfor %}
