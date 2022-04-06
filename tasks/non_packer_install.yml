@@ -93,6 +93,8 @@
     group: '{{ vault_group }}'
     mode: '0640'
     state: touch
+    access_time: preserve
+    modification_time: preserve
   notify:
     - Reload Vault daemon
 
