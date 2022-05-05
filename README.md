@@ -129,6 +129,10 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Specifies telemetry configuration to Vault. Refer to [this](https://www.vaultproject.io/docs/configuration/telemetry#telemetry-parameters) document for available parameters. Each parameter can be passed as a key to this dictionary
 - No default value
 
+### `service_registration`
+- Specifies service registrtation configuration for Vault. Refer to [this](https://www.vaultproject.io/docs/configuration/service-registration) document for available parameters. Each parameter can be passed as a key to this dictionary
+- No default value
+
 ### `vault_seal`
 - A dictionary defining the seal type to use for Vault. Refer to [this](https://www.vaultproject.io/docs/configuration/seal) document for the required parameters to pass as keys if using a cloud KMS solution.
 - Type: `dictionary`

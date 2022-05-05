@@ -111,6 +111,14 @@ plugin_directory = "{{ vault_plugin_directory }}"
 license_path = "{{ vault_license_directory }}/vault.hclic"
 {% endif %}
 
+{% if service_registration is defined %}
+service_registration "{{ service_registration.name }}" {
+{% for item in service_registration if not item == "name" %}
+  {{ item }} = "{{ service_registration[item] }}"
+{% endfor %}
+}
+{% endif %}
+
 api_addr      = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_api_port }}"
 cluster_addr  = "{{ proto }}://{{ ansible_fqdn }}:{{ vault_cluster_port }}"
 ui            = {{ vault_ui_enable | lower }}
