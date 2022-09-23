@@ -74,15 +74,15 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 
 ### `vault_version`
 - Version of Vault to install
-- Default value: `1.10.0`
+- Default value: `1.11.3`
 
 ### `vault_archive`
 - Name of the Vault file archive to download
-- Default value: `vault_1.10.0_linux_amd64.zip`
+- Default value: `vault_1.11.3_linux_amd64.zip`
 
 ### `vault_download`
 - Full remote URL location to the vault archive
-- Default value: `https://releases.hashicorp.com/vault/1.10.0/vault_1.10.0_linux_amd64.zip`
+- Default value: `https://releases.hashicorp.com/vault/1.11.3/vault_1.11.3_linux_amd64.zip`
 
 ### `vault_local_binary_location`
 - If set, Ansible will locally look for the Vault binary at the specified path
@@ -122,8 +122,16 @@ Ansible variables are listed below, along with default values (see `defaults/mai
 - Default value: `provider: 'none'`
 
 ### `vault_storage_backend`
-- Storage backend to use (supports file, integrated, or Consul)
+- Storage backend to use (supports file, integrated, gcs, or Consul)
 - Default value: `integrated`
+
+### `vault_gcs_storage_bucket`
+- Name of the Google Cloud Storage bucket (only used when `vault_storage_backend` is `gcs`)
+- No default value
+
+### `vault_gcs_ha_enabled`
+- Specifies if high availability mode is enabled (only used when `vault_storage_backend` is `gcs`)
+- No default value
 
 ### `vault_telemetry`
 - Specifies telemetry configuration to Vault. Refer to [this](https://www.vaultproject.io/docs/configuration/telemetry#telemetry-parameters) document for available parameters. Each parameter can be passed as a key to this dictionary
@@ -279,7 +287,7 @@ $ mkdir group_vars
 $ cat <<EOF > vault_primary.yml
 ---
 vault_storage_backend: 'integrated'
-vault_version: '1.10.0+ent'
+vault_version: '1.11.3+ent'
 
 vault_tls_ca_cert_file: 'tls/consul-agent-ca.pem'
 vault_tls_cert_file: 'tls/dc1-server-consul-0.pem'

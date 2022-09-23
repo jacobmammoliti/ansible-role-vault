@@ -27,7 +27,7 @@ vault_architecture_map:
   armv7l: arm
   aarch64: arm64
 
-vault_version: '1.10.0'
+vault_version: '1.11.3'
 vault_os: '{{ ansible_system|lower }}'
 vault_architecture: '{{ vault_architecture_map[ansible_architecture] }}'
 vault_archive: 'vault_{{ vault_version }}_{{ vault_os }}_{{ vault_architecture }}.zip'
@@ -42,7 +42,7 @@ vault_ui_enable: true
 cloud:
   provider: 'none'
 
-# options: file, integrated, consul
+# options: file, integrated, consul, gcs
 vault_storage_backend: 'integrated'
 
 vault_seal:

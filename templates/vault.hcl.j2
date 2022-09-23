@@ -79,6 +79,11 @@ storage "consul" {
   tls_skip_verify = "{{ consul_tls_skip_verify }}"
 {% endif %}
 }
+{% elif vault_storage_backend == "gcs" %}
+storage "gcs" {
+  bucket     = "{{ vault_gcs_storage_bucket }}"
+  ha_enabled = true
+}
 {% else %}
 storage "file" {
   path = "{{ vault_data_directory }}/data"
