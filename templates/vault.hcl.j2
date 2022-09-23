@@ -82,7 +82,7 @@ storage "consul" {
 {% elif vault_storage_backend == "gcs" %}
 storage "gcs" {
   bucket     = "{{ vault_gcs_storage_bucket }}"
-  ha_enabled = true
+  ha_enabled = "{{ vault_gcs_ha_enabled }}"
 }
 {% else %}
 storage "file" {
