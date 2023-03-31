@@ -66,7 +66,7 @@
 - name: Installing Vault package via apt
   ansible.builtin.apt:
     name:
-      - "vault={{ vault_version }}"
+      - "vault={{ vault_version }}{{ (vault_package_revision == '') | ternary('', '-' ~ vault_package_revision) }}"
     state: present
     update_cache: true
   when:
@@ -76,7 +76,7 @@
 - name: Installing Vault enterprise package via apt
   ansible.builtin.apt:
     name:
-      - "vault-enterprise={{ vault_version }}+ent"
+      - "vault-enterprise={{ vault_version }}+ent{{ (vault_package_revision == '') | ternary('', '-' ~ vault_package_revision) }}"
     state: present
     update_cache: true
   when:
